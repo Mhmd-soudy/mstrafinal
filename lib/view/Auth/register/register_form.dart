@@ -121,15 +121,20 @@ class _RegisterFormState extends State<RegisterForm> {
             CupertinoButton(
               borderRadius: BorderRadius.circular(12),
               color: const Color.fromARGB(255, 119, 197, 134),
-              child: const Text(
-                "تسجيل حساب",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
+              child: authViewModel.isLoading
+                  ? const CupertinoActivityIndicator()
+                  : const Text(
+                      "تسجيل حساب",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
+                if (!_formKey.currentState!.validate()) return;
+
+                try {
+                  authViewModel.setLoading(true); // Start loading
                   await authViewModel.register(
                     name: nameController.text.trim(),
                     email: emailController.text.trim(),
@@ -139,9 +144,42 @@ class _RegisterFormState extends State<RegisterForm> {
                         passwordConfirmationController.text.trim(),
                     context: context,
                   );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to register: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                } finally {
+                  authViewModel.setLoading(false); // End loading
                 }
               },
             ),
+            // CupertinoButton(
+            //   borderRadius: BorderRadius.circular(12),
+            //   color: const Color.fromARGB(255, 119, 197, 134),
+            //   child: const Text(
+            //     "تسجيل حساب",
+            //     style: TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       fontSize: 18,
+            //     ),
+            //   ),
+            //   onPressed: () async {
+            //     if (_formKey.currentState!.validate()) {
+            //       await authViewModel.register(
+            //         name: nameController.text.trim(),
+            //         email: emailController.text.trim(),
+            //         phone: phoneNumberController.text.trim(),
+            //         password: passwordController.text.trim(),
+            //         passwordConfirmation:
+            //             passwordConfirmationController.text.trim(),
+            //         context: context,
+            //       );
+            //     }
+            //   },
+            // ),
             const VerticalSpace(0.02),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

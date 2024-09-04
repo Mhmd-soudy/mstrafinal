@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mstra/core/utilis/assets_manager.dart';
 import 'package:mstra/core/utilis/color_manager.dart';
 import 'package:mstra/core/utilis/font_manager.dart';
+import 'package:mstra/core/utilis/gradient_background_color.dart';
 import 'package:mstra/models/navigation_model.dart';
 import 'package:mstra/routes/routes_manager.dart';
 import 'package:mstra/services/connectivity_service.dart';
@@ -57,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         shadowColor: ColorManager.grey,
-        elevation: 3,
+        elevation: 1,
         backgroundColor: ColorManager.primary,
         centerTitle: true,
         leading: Padding(
@@ -84,30 +85,33 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: _hasInternet
-          ? IndexedStack(
-              index: navigationModel.currentIndex,
-              children: [
-                ProfilePage(),
-                MyCoursesPage(),
-                CategoriesScreen(),
-                HomePage(),
-              ],
-            )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: GradientBackground(
+        child: _hasInternet
+            ? IndexedStack(
+                index: navigationModel.currentIndex,
                 children: [
-                  Image.asset(ImageAssets
-                      .nointernetConnection), // Your no internet connection image
-                  const SizedBox(height: 20),
-                  const Text(
-                    'No internet connection',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  ProfilePage(),
+                  MyCoursesPage(),
+                  CategoriesScreen(),
+                  HomePage(),
                 ],
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(ImageAssets
+                        .nointernetConnection), // Your no internet connection image
+                    const SizedBox(height: 20),
+                    const Text(
+                      'No internet connection',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-            ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: ColorManager.black,
         unselectedItemColor: ColorManager.grey,

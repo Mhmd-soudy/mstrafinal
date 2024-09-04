@@ -92,20 +92,52 @@ class _LoginFormState extends State<LoginForm> {
                 CupertinoButton(
                   borderRadius: BorderRadius.circular(12),
                   color: const Color.fromARGB(255, 119, 197, 134),
-                  child: const Text(
-                    "تسجيل الدخول",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
+                  child: authViewModel.isLoading
+                      ? const CupertinoActivityIndicator()
+                      : const Text(
+                          "تسجيل الدخول",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    try {
+                      authViewModel.setLoading(true); // Start loading
                       await authViewModel.login(
                         email: emailController.text.trim(),
                         password: passwordController.text.trim(),
                         context: context,
                       );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to log in: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } finally {
+                      authViewModel.setLoading(false); // End loading
                     }
                   },
                 ),
+                // CupertinoButton(
+                //   borderRadius: BorderRadius.circular(12),
+                //   color: const Color.fromARGB(255, 119, 197, 134),
+                //   child: const Text(
+                //     "تسجيل الدخول",
+                //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                //   ),
+                //   onPressed: () async {
+                //     if (_formKey.currentState!.validate()) {
+                //       await authViewModel.login(
+                //         email: emailController.text.trim(),
+                //         password: passwordController.text.trim(),
+                //         context: context,
+                //       );
+                //     }
+                //   },
+                // ),
                 const VerticalSpace(0.02),
                 _buildRegisterText(context),
               ],

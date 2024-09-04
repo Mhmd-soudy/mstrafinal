@@ -24,189 +24,317 @@ class _CourseListViewState extends State<CourseListView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CoursesViewModel>(context);
-
+    int crossAxisCount = MediaQuery.of(context).size.width > 600 ? 3 : 2;
     return RefreshIndicator(
       onRefresh: () async {
         await viewModel.fetchCourses();
       },
-      child: viewModel.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : viewModel.error.isNotEmpty
-              ? Center(child: Text(viewModel.error))
-              : GridView.builder(
-                  padding: const EdgeInsets.all(12.0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.75,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Promotional Section
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.006,
                   ),
-                  itemCount: viewModel.courses.length,
-                  itemBuilder: (context, index) {
-                    final course = viewModel.courses[index];
-                    return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pushNamed(
-                            RoutesManager.courseDetailScreen,
-                            arguments: course.slug,
-                          );
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          elevation: 6,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color.fromARGB(255, 255, 255, 255),
-                                  Color.fromARGB(255, 255, 255, 255)
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
+                  Text(
+                    'انضم الآن لمئات الآلاف من',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width *
+                          0.05, // Responsive font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.005), // Responsive spacing
+                  Text(
+                    'المبدعين العرب',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width *
+                          0.05, // Responsive font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.023), // Responsive spacing
+                  Text(
+                    '- مئات الدورات التدريبية واكثر" بأسعار رمزية -',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width *
+                          0.04, // Responsive font size
+                    ),
+                  ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height *
+                          0.025), // Responsive spacing
+                  Text(
+                    'تصفح جميع كورسات المنصة',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width *
+                          0.04, // Responsive font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            // Course List Section
+            viewModel.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : viewModel.error.isNotEmpty
+                    ? Center(child: Text(viewModel.error))
+                    : GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(12.0),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing:
+                              MediaQuery.of(context).size.width * 0.015,
+                          mainAxisSpacing:
+                              MediaQuery.of(context).size.height * 0.015,
+                          childAspectRatio: 0.75,
+                        ),
+                        itemCount: viewModel.courses.length,
+                        itemBuilder: (context, index) {
+                          final course = viewModel.courses[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                RoutesManager.courseDetailScreen,
+                                arguments: course.slug,
+                              );
+                            },
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  // Image Container
-                                  Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.16,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.vertical(
-                                          top: Radius.circular(10)),
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                            AppUrl.NetworkStorage +
-                                                course.image),
-                                        fit: BoxFit.cover,
+                              elevation: 6,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 255, 255, 255),
+                                      Color.fromARGB(255, 255, 255, 255),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      // Image Container with loading indicator
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.15,
+                                        child: Stack(
+                                          children: [
+                                            // Image with placeholder and loading indicator
+                                            Positioned.fill(
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.vertical(
+                                                  top: Radius.circular(10),
+                                                ),
+                                                child: Image.network(
+                                                  AppUrl.NetworkStorage +
+                                                      course.image,
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder:
+                                                      (BuildContext context,
+                                                          Widget child,
+                                                          ImageChunkEvent?
+                                                              loadingProgress) {
+                                                    if (loadingProgress ==
+                                                        null) {
+                                                      return child;
+                                                    } else {
+                                                      return Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          value: loadingProgress
+                                                                      .expectedTotalBytes !=
+                                                                  null
+                                                              ? loadingProgress
+                                                                      .cumulativeBytesLoaded /
+                                                                  (loadingProgress
+                                                                          .expectedTotalBytes ??
+                                                                      1)
+                                                              : null,
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              119, 197, 134),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Center(
+                                                      child: Icon(
+                                                        Icons.broken_image,
+                                                        size: 50,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.003,
-                                  ),
-                                  // Course Name
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      right:
-                                          MediaQuery.of(context).size.height *
-                                              0.005,
-                                    ),
-                                    child: Text(
-                                      course.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.035,
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                            const Color.fromARGB(255, 0, 0, 0),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.0028,
                                       ),
-                                      textAlign: TextAlign.end,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.003,
-                                  ),
-                                  // User Information Row
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      right:
-                                          MediaQuery.of(context).size.height *
+                                      // Course Name
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          right: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.0048,
+                                        ),
+                                        child: Text(
+                                          course.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.033,
+                                            fontWeight: FontWeight.bold,
+                                            color: const Color.fromARGB(
+                                                255, 0, 0, 0),
+                                          ),
+                                          textAlign: TextAlign.end,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.0028,
+                                      ),
+                                      // User Information Row
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          right: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
                                               0.005,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Expanded(
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                course.user.name.toUpperCase(),
+                                                textAlign: TextAlign.end,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.033,
+                                                  color: const Color.fromARGB(
+                                                      179, 0, 0, 0),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.02,
+                                            ),
+                                            CircleAvatar(
+                                              radius: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.03,
+                                              backgroundImage:
+                                                  course.user.image != null
+                                                      ? NetworkImage(AppUrl
+                                                              .NetworkStorage +
+                                                          course.user.image!)
+                                                      : null,
+                                              child: course.user.image == null
+                                                  ? Icon(
+                                                      Icons.person,
+                                                      size:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.028,
+                                                      color: Colors.white,
+                                                    )
+                                                  : null,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.0045,
+                                      ),
+                                      // Price Text
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          right: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.0045,
+                                        ),
+                                        child: Align(
+                                          alignment: Alignment.bottomRight,
                                           child: Text(
-                                            course.user.name.toUpperCase(),
-                                            textAlign: TextAlign.end,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                                            "${course.price} جنيه",
                                             style: TextStyle(
                                               fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.035,
-                                              color: const Color.fromARGB(
-                                                  179, 0, 0, 0),
+                                                  0.027,
+                                              color: Colors.black,
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02,
-                                        ),
-                                        CircleAvatar(
-                                          radius: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.03,
-                                          backgroundImage:
-                                              course.user.image != null
-                                                  ? NetworkImage(
-                                                      AppUrl.NetworkStorage +
-                                                          course.user.image!)
-                                                  : null,
-                                          child: course.user.image == null
-                                              ? Icon(
-                                                  Icons.person,
-                                                  size: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.03,
-                                                  color: Colors.white,
-                                                )
-                                              : null,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.005,
-                                  ),
-                                  // Price Text
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      right:
-                                          MediaQuery.of(context).size.height *
-                                              0.005,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Text(
-                                        "${course.price} جنيه",
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.03,
-                                          color: Colors.black,
-                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ));
+                          );
+                        },
+                      ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                    //       Card(
+
+
+  //       Card(
                     //     shape: RoundedRectangleBorder(
                     //       borderRadius: BorderRadius.circular(20.0),
                     //     ),
@@ -319,8 +447,3 @@ class _CourseListViewState extends State<CourseListView> {
                     //     ),
                     //   ),
                     // );
-                  },
-                ),
-    );
-  }
-}

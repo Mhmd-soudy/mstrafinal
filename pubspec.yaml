@@ -50,6 +50,7 @@ dependencies:
   url_launcher: ^6.1.7
   connectivity_plus: ^5.0.2
   device_info_plus: ^10.1.2
+  image_picker: ^1.1.2
   
   # flutter_windowmanager: ^0.2.0
   # connectivity_plus: ^6.0.2

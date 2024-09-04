@@ -34,10 +34,6 @@ void main() {
         ),
         ChangeNotifierProvider(create: (_) => MainCategoryViewModel()),
         ChangeNotifierProvider(create: (_) => UserProfileViewModel()),
-        // Provider<ConnectivityService>(
-        //   create: (_) => ConnectivityService(),
-        //   dispose: (context, service) => service.dispose(),
-        // ),
       ],
       child: const MyApp(),
     ),
@@ -49,7 +45,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // _secureScreen();
     return MaterialApp(
       theme: ThemeData(
         // Set the default font for the app
@@ -60,8 +55,4 @@ class MyApp extends StatelessWidget {
       initialRoute: RoutesManager.splashScreen,
     );
   }
-
-  // void _secureScreen() async {
-  //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-  // }
 }
