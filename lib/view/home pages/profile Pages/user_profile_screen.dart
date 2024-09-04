@@ -146,7 +146,10 @@ class _UserProfileFormState extends State<UserProfileForm> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                    colors: [
+                      Colors.blueAccent,
+                      Colors.lightBlueAccent,
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -159,18 +162,28 @@ class _UserProfileFormState extends State<UserProfileForm> {
                     ),
                   ],
                 ),
-                child: widget.user.image != null
-                    ? ClipOval(
-                        child: Image.network(
+                child: ClipOval(
+                  child: widget.user.image != null
+                      ? Image.network(
                           AppUrl.NetworkStorage + widget.user.image!,
                           fit: BoxFit.cover,
                           height: MediaQuery.of(context).size.height * 0.15,
                           width: MediaQuery.of(context).size.height * 0.15,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Display a fallback icon if the image fails to load
+                            return Icon(
+                              Icons.person,
+                              size: MediaQuery.of(context).size.height * 0.10,
+                              color: Colors.white,
+                            );
+                          },
+                        )
+                      : Icon(
+                          Icons.person,
+                          size: MediaQuery.of(context).size.height * 0.10,
+                          color: Colors.white,
                         ),
-                      )
-                    : Icon(Icons.person,
-                        size: MediaQuery.of(context).size.height * 0.10,
-                        color: Colors.white),
+                ),
               ),
             ),
             SizedBox(

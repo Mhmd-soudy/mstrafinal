@@ -50,7 +50,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // _secureScreen();
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        // Set the default font for the app
+        fontFamily: 'IBMPlexSansArabic',
+      ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: RoutesManager.onGenerateRoute,
       initialRoute: RoutesManager.splashScreen,

@@ -57,20 +57,32 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         shadowColor: ColorManager.grey,
-        title: Image.asset(ImageAssets.splashLogo,
-            height: MediaQuery.of(context).size.height * 0.04,
-            width: MediaQuery.of(context).size.width * 0.2),
         elevation: 3,
-        leading: IconButton(
+        backgroundColor: ColorManager.primary,
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: IconButton(
             onPressed: () {
               Navigator.pushNamed(context, RoutesManager.searchScreen);
             },
             icon: Icon(
               Icons.search,
               color: ColorManager.grey,
-            )),
-        backgroundColor: ColorManager.primary,
-        centerTitle: true,
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 30.0),
+            child: Image.asset(
+              ImageAssets.splashLogo,
+              height: MediaQuery.of(context).size.height * 0.04,
+              width: MediaQuery.of(context).size.width * 0.2,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ],
       ),
       body: _hasInternet
           ? IndexedStack(

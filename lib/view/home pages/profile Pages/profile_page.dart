@@ -75,7 +75,7 @@ class ProfilePage extends StatelessWidget {
                               gradient: LinearGradient(
                                 colors: [
                                   Colors.blueAccent,
-                                  Colors.lightBlueAccent
+                                  Colors.lightBlueAccent,
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -89,9 +89,9 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: image != null
-                                ? ClipOval(
-                                    child: Image.network(
+                            child: ClipOval(
+                              child: image != null
+                                  ? Image.network(
                                       AppUrl.NetworkStorage + image,
                                       fit: BoxFit.cover,
                                       height:
@@ -100,12 +100,26 @@ class ProfilePage extends StatelessWidget {
                                       width:
                                           MediaQuery.of(context).size.height *
                                               0.15,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        // Display a fallback icon if the image fails to load
+                                        return Icon(
+                                          Icons.person,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.10,
+                                          color: Colors.white,
+                                        );
+                                      },
+                                    )
+                                  : Icon(
+                                      Icons.person,
+                                      size: MediaQuery.of(context).size.height *
+                                          0.10,
+                                      color: Colors.white,
                                     ),
-                                  )
-                                : Icon(Icons.person,
-                                    size: MediaQuery.of(context).size.height *
-                                        0.10,
-                                    color: Colors.white),
+                            ),
                           ),
                         ),
                         SizedBox(

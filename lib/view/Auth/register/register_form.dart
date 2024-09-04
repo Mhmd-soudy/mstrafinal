@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mstra/core/utilis/assets_manager.dart';
@@ -51,109 +49,65 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context);
+
     return Form(
       key: _formKey,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Image.asset(
               ImageAssets.authImage,
-              height: MediaQuery.of(context).size.height * 0.25,
-              width: MediaQuery.of(context).size.width * 0.25,
+              height: MediaQuery.of(context).size.height * 0.15,
+              width: MediaQuery.of(context).size.width * 0.15,
             ),
             const VerticalSpace(0.02),
-            Container(
-              alignment: Alignment.centerRight,
-              child: LabelText(labeltext: "اسم المستخدم"),
-            ),
-            const VerticalSpace(0.005),
-            TextFormField(
-              textAlign: TextAlign.right,
-              textInputAction: TextInputAction.next,
-              validator: validateName,
+            _buildLabel("اسم المستخدم"),
+            const VerticalSpace(0.01),
+            _buildTextField(
               controller: nameController,
-              decoration: formDecoration("اسم المستخدم", Icons.person_outline),
+              hintText: "اسم المستخدم",
+              icon: Icons.person_outline,
+              validator: validateName,
+              textInputAction: TextInputAction.next,
             ),
             const VerticalSpace(0.02),
-            Container(
-              alignment: Alignment.centerRight,
-              child: LabelText(labeltext: "البريد الالكترونى"),
-            ),
-            const VerticalSpace(0.005),
-            TextFormField(
-              textAlign: TextAlign.right,
-              textInputAction: TextInputAction.next,
-              validator: validateEmail,
+            _buildLabel("البريد الالكترونى"),
+            const VerticalSpace(0.01),
+            _buildTextField(
               controller: emailController,
-              decoration:
-                  formDecoration("البريد الالكترونى", Icons.mail_outlined),
+              hintText: "البريد الالكترونى",
+              icon: Icons.mail_outlined,
+              validator: validateEmail,
+              textInputAction: TextInputAction.next,
             ),
             const VerticalSpace(0.02),
-            Container(
-              alignment: Alignment.centerRight,
-              child: LabelText(labeltext: "رقم الهاتف"),
-            ),
-            const VerticalSpace(0.005),
-            TextFormField(
-              textAlign: TextAlign.right,
-              textInputAction: TextInputAction.next,
-              validator: validatePhoneNumber,
+            _buildLabel("رقم الهاتف"),
+            const VerticalSpace(0.01),
+            _buildTextField(
               controller: phoneNumberController,
-              decoration: formDecoration("رقم الهاتف", Icons.phone_outlined),
+              hintText: "رقم الهاتف",
+              icon: Icons.phone_outlined,
+              validator: validatePhoneNumber,
+              textInputAction: TextInputAction.next,
             ),
             const VerticalSpace(0.02),
-            Container(
-              alignment: Alignment.centerRight,
-              child: LabelText(labeltext: "كلمة المرور"),
-            ),
-            const VerticalSpace(0.005),
-            TextFormField(
-              obscureText: _obscureText,
-              textAlign: TextAlign.right,
-              textInputAction: TextInputAction.next,
-              validator: validatePassword,
+            _buildLabel("كلمة المرور"),
+            const VerticalSpace(0.01),
+            _buildPasswordField(
               controller: passwordController,
-              decoration: InputDecoration(
-                errorStyle: const TextStyle(fontSize: 10),
-                prefixIcon: IconButton(
-                  icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                ),
-                hintTextDirection: TextDirection.rtl,
-                suffixIcon: const Icon(
-                  Icons.lock_outline,
-                  color: ColorManager.indigoAccent,
-                ),
-                errorMaxLines: 3,
-                hintText: "كلمة المرور",
-                contentPadding: const EdgeInsets.all(5),
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 17,
-                ),
-                enabledBorder: enabledborder,
-                focusedBorder: focusedborder,
-                errorBorder: errorborder,
-              ),
+              hintText: "كلمة المرور",
+              validator: validatePassword,
             ),
             const VerticalSpace(0.02),
-            Container(
-              alignment: Alignment.centerRight,
-              child: LabelText(labeltext: "تأكيد كلمة المرور"),
-            ),
-            const VerticalSpace(0.005),
-            TextFormField(
-              obscureText: _obscureText,
-              textAlign: TextAlign.right,
-              textInputAction: TextInputAction.next,
+            _buildLabel("تأكيد كلمة المرور"),
+            const VerticalSpace(0.01),
+            _buildPasswordField(
+              controller: passwordConfirmationController,
+              hintText: "تأكيد كلمة المرور",
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please confirm your password';
@@ -162,49 +116,21 @@ class _RegisterFormState extends State<RegisterForm> {
                 }
                 return null;
               },
-              controller: passwordConfirmationController,
-              decoration: InputDecoration(
-                errorStyle: const TextStyle(fontSize: 10),
-                prefixIcon: IconButton(
-                  icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                ),
-                hintTextDirection: TextDirection.rtl,
-                suffixIcon: const Icon(
-                  Icons.lock_outline,
-                  color: ColorManager.indigoAccent,
-                ),
-                errorMaxLines: 3,
-                hintText: "تأكيد كلمة المرور",
-                contentPadding: const EdgeInsets.all(5),
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 17,
-                ),
-                enabledBorder: enabledborder,
-                focusedBorder: focusedborder,
-                errorBorder: errorborder,
-              ),
             ),
             const VerticalSpace(0.03),
             CupertinoButton(
-              borderRadius: BorderRadius.circular(15),
-              color: ColorManager.indigoAccent,
+              borderRadius: BorderRadius.circular(12),
+              color: const Color.fromARGB(255, 119, 197, 134),
               child: const Text(
                 "تسجيل حساب",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 18,
                 ),
               ),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  await AuthViewModel().register(
+                  await authViewModel.register(
                     name: nameController.text.trim(),
                     email: emailController.text.trim(),
                     phone: phoneNumberController.text.trim(),
@@ -213,9 +139,6 @@ class _RegisterFormState extends State<RegisterForm> {
                         passwordConfirmationController.text.trim(),
                     context: context,
                   );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
                 }
               },
             ),
@@ -223,29 +146,145 @@ class _RegisterFormState extends State<RegisterForm> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     Navigator.popAndPushNamed(context, RoutesManager.loginPage);
                   },
-                  child: const Text(
+                  child: Text(
                     "تسجيل الدخول",
                     style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 17,
+                      color: const Color.fromARGB(255, 119, 197, 134),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 const Text(
                   "لديك حساب؟",
                   style: TextStyle(
                     color: Colors.grey,
-                    fontSize: 17,
+                    fontSize: 16,
                   ),
                 ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    required String? Function(String?) validator,
+    required TextInputAction textInputAction,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        textAlign: TextAlign.right,
+        textInputAction: textInputAction,
+        validator: validator,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon, color: ColorManager.indigoAccent),
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.grey[600]),
+          contentPadding: const EdgeInsets.all(16),
+          enabledBorder: _buildBorder(),
+          focusedBorder: _buildBorder(isFocused: true),
+          errorBorder: _buildBorder(isError: true),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String hintText,
+    required String? Function(String?) validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        obscureText: _obscureText,
+        textAlign: TextAlign.right,
+        validator: validator,
+        decoration: InputDecoration(
+          prefixIcon: IconButton(
+            icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+          suffixIcon: Icon(
+            Icons.lock_outline,
+            color: ColorManager.indigoAccent,
+          ),
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.grey[600]),
+          contentPadding: const EdgeInsets.all(16),
+          enabledBorder: _buildBorder(),
+          focusedBorder: _buildBorder(isFocused: true),
+          errorBorder: _buildBorder(isError: true),
+        ),
+      ),
+    );
+  }
+
+  OutlineInputBorder _buildBorder(
+      {bool isFocused = false, bool isError = false}) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(
+        color: isError
+            ? Colors.red
+            : isFocused
+                ? ColorManager.indigoAccent
+                : Colors.grey,
+        width: 1.5,
       ),
     );
   }

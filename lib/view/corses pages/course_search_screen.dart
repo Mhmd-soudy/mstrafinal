@@ -59,8 +59,10 @@ class CourseSearchScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                   child: Image.network(
                                     AppUrl.NetworkStorage + course.image,
-                                    width: 80,
-                                    height: 80,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.1,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

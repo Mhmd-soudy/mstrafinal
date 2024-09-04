@@ -14,22 +14,22 @@ class SubCategoryCoursesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Courses'),
+        title: const Text('Courses'),
       ),
       body: FutureBuilder(
         future: Provider.of<MainCategoryViewModel>(context, listen: false)
             .fetchSubCategorycourses(subCategoryId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Failed to load courses'));
+            return const Center(child: Text('Failed to load courses'));
           } else {
             return Consumer<MainCategoryViewModel>(
               builder: (ctx, subCategoryVM, child) {
                 if (subCategoryVM.subCategory == null ||
                     subCategoryVM.subCategory!.courses.isEmpty) {
-                  return Center(child: Text('No courses available'));
+                  return const Center(child: Text('No courses available'));
                 } else {
                   return ListView.builder(
                     itemCount: subCategoryVM.subCategory!.courses.length,
@@ -55,40 +55,74 @@ class CourseListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(16),
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            '${AppUrl.NetworkStorage}${course.image}',
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(
+          RoutesManager.courseDetailScreen,
+          arguments: course.slug,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 8,
+                offset: Offset(0, 3), // Shadow position
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // Image Container
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  AppUrl.NetworkStorage + course.image,
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.04),
+              // Course Details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      course.name,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            color: Colors.black87,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.005),
+                    Text(
+                      course.price.toUpperCase(),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Colors.grey[600],
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        title: Text(
-          course.name,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        subtitle: Text(
-          course.description,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        onTap: () {
-          Navigator.of(context).pushNamed(
-            RoutesManager.courseDetailScreen,
-            arguments: course.slug,
-          );
-        },
       ),
     );
   }
