@@ -105,6 +105,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
   File? _imageFile;
+  bool _isLoading = false; // Add this line
   // Add a field to hold the image file
   final ImagePicker _picker = ImagePicker();
 
@@ -296,41 +297,64 @@ class _UserProfileFormState extends State<UserProfileForm> {
                       ),
                       const SizedBox(height: 32),
                       ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final updatedUser = User(
-                              id: widget.user.id,
-                              name: _nameController.text.isNotEmpty
-                                  ? _nameController.text
-                                  : widget.user.name,
-                              email: _emailController.text.isNotEmpty
-                                  ? _emailController.text
-                                  : widget.user.email,
-                              phone: _phoneNumberController.text.isNotEmpty
-                                  ? _phoneNumberController.text
-                                  : widget.user.phone,
-                              image: widget.user
-                                  .image, // Keep the existing image if no new one
-                            );
+                        onPressed: _isLoading
+                            ? null // Disable button if loading
+                            : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isLoading = true; // Start loading
+                                  });
 
-                            // Pass the image file to the updateUser method
-                            await viewModel.updateUser(context, updatedUser,
-                                imageFile: _imageFile);
+                                  final updatedUser = User(
+                                    id: widget.user.id,
+                                    name: _nameController.text.isNotEmpty
+                                        ? _nameController.text
+                                        : widget.user.name,
+                                    email: _emailController.text.isNotEmpty
+                                        ? _emailController.text
+                                        : widget.user.email,
+                                    phone:
+                                        _phoneNumberController.text.isNotEmpty
+                                            ? _phoneNumberController.text
+                                            : widget.user.phone,
+                                    image: widget.user
+                                        .image, // Keep the existing image if no new one
+                                  );
 
-                            if (viewModel.errorMessage != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(viewModel.errorMessage!)),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('Profile updated successfully!')),
-                              );
-                            }
-                          }
-                        },
+                                  try {
+                                    // Pass the image file to the updateUser method
+                                    await viewModel.updateUser(
+                                        context, updatedUser,
+                                        imageFile: _imageFile);
+
+                                    if (viewModel.errorMessage != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content:
+                                                Text(viewModel.errorMessage!)),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Profile updated successfully!')),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Error: $e'),
+                                      ),
+                                    );
+                                  } finally {
+                                    setState(() {
+                                      _isLoading = false; // End loading
+                                    });
+                                  }
+                                }
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               const Color.fromARGB(255, 93, 142, 92),
@@ -341,7 +365,15 @@ class _UserProfileFormState extends State<UserProfileForm> {
                           ),
                           elevation: 5,
                         ),
-                        child: const Text('Update Profile'),
+                        child: _isLoading
+                            ? SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text('Update Profile'),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.03,

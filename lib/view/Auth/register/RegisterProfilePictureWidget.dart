@@ -40,8 +40,8 @@ class _RegisterProfilePictureWidgetState
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.blueAccent,
-                  Colors.lightBlueAccent,
+                  const Color.fromARGB(255, 161, 216, 185),
+                  const Color.fromARGB(255, 124, 202, 237),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
