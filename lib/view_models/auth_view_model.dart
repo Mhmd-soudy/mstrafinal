@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mstra/models/login_response_model.dart';
@@ -117,7 +119,6 @@ class AuthViewModel with ChangeNotifier {
     }
   }
 
-  // Register with loading indicator
   Future<void> register({
     required String name,
     required String email,
@@ -125,29 +126,34 @@ class AuthViewModel with ChangeNotifier {
     required String password,
     required String passwordConfirmation,
     required BuildContext context,
+    File? imageFile, // Add this parameter
   }) async {
     setLoading(true); // Start loading
 
     try {
       String? androidId = await getAndroidId();
       final url = Uri.parse(AppUrl.registerEndPoint);
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'name': name,
-          'email': email,
-          'phone': phone,
-          'password': password,
-          "password_confirmation": passwordConfirmation,
-          "ip_adress": androidId,
-        }),
-      );
 
+      final request = http.MultipartRequest('POST', url)
+        ..headers['Content-Type'] = 'multipart/form-data'
+        ..fields['name'] = name
+        ..fields['email'] = email
+        ..fields['phone'] = phone
+        ..fields['password'] = password
+        ..fields['password_confirmation'] = passwordConfirmation
+        ..fields['ip_adress'] = androidId!;
+
+      if (imageFile != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('image', imageFile.path),
+        );
+      }
+
+      final response = await request.send();
+
+      final responseBody = await response.stream.bytesToString();
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
+        final Map<String, dynamic> responseData = json.decode(responseBody);
         final loginResponse = LoginResponse.fromJson(responseData);
         _userRole = responseData['data']['role'];
 
@@ -165,7 +171,7 @@ class AuthViewModel with ChangeNotifier {
         await prefs.setString('user_image', _user!.image ?? "");
         await prefs.setString('role', _userRole ?? "");
       } else {
-        final responseData = json.decode(response.body);
+        final responseData = json.decode(responseBody);
         final errorMessage = responseData['message'] ?? 'Unknown error';
         throw Exception('Registration failed: $errorMessage');
       }
@@ -180,6 +186,70 @@ class AuthViewModel with ChangeNotifier {
       setLoading(false); // End loading
     }
   }
+
+  // Register with loading indicator
+  // Future<void> register({
+  //   required String name,
+  //   required String email,
+  //   required String phone,
+  //   required String password,
+  //   required String passwordConfirmation,
+  //   required BuildContext context,
+  // }) async {
+  //   setLoading(true); // Start loading
+
+  //   try {
+  //     String? androidId = await getAndroidId();
+  //     final url = Uri.parse(AppUrl.registerEndPoint);
+  //     final response = await http.post(
+  //       url,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: json.encode({
+  //         'name': name,
+  //         'email': email,
+  //         'phone': phone,
+  //         'password': password,
+  //         "password_confirmation": passwordConfirmation,
+  //         "ip_adress": androidId,
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> responseData = json.decode(response.body);
+  //       final loginResponse = LoginResponse.fromJson(responseData);
+  //       _userRole = responseData['data']['role'];
+
+  //       _user = loginResponse.user;
+  //       _accessToken = loginResponse.accessToken;
+  //       notifyListeners();
+  //       Navigator.pushReplacementNamed(context, RoutesManager.homePage);
+
+  //       final prefs = await SharedPreferences.getInstance();
+  //       await prefs.setString('access_token', _accessToken!);
+  //       await prefs.setInt('id', _user!.id ?? 0);
+  //       await prefs.setString('name', _user!.name);
+  //       await prefs.setString('email', _user!.email);
+  //       await prefs.setString('phone', _user!.phone);
+  //       await prefs.setString('user_image', _user!.image ?? "");
+  //       await prefs.setString('role', _userRole ?? "");
+  //     } else {
+  //       final responseData = json.decode(response.body);
+  //       final errorMessage = responseData['message'] ?? 'Unknown error';
+  //       throw Exception('Registration failed: $errorMessage');
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('An error occurred: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   } finally {
+  //     setLoading(false); // End loading
+  //   }
+  // }
 
   // Logout with loading indicator
   Future<void> logout(BuildContext context) async {

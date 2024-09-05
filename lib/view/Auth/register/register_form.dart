@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mstra/core/utilis/assets_manager.dart';
@@ -5,6 +7,7 @@ import 'package:mstra/core/utilis/color_manager.dart';
 import 'package:mstra/core/utilis/space_widgets.dart';
 import 'package:mstra/core/widgets/validators.dart';
 import 'package:mstra/routes/routes_manager.dart';
+import 'package:mstra/view/Auth/register/RegisterProfilePictureWidget.dart';
 import 'package:mstra/view/Auth/widgets/decoration.dart';
 import 'package:mstra/view/Auth/widgets/label_text.dart';
 import 'package:mstra/view_models/auth_view_model.dart'; // Import the AuthViewModel
@@ -26,6 +29,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   bool _obscureText = true;
   final _formKey = GlobalKey<FormState>();
+  File? _imageFile; // Add this variable to store the selected image
 
   @override
   void initState() {
@@ -47,6 +51,12 @@ class _RegisterFormState extends State<RegisterForm> {
     super.dispose();
   }
 
+  void _onImagePicked(File? imageFile) {
+    setState(() {
+      _imageFile = imageFile;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -59,11 +69,14 @@ class _RegisterFormState extends State<RegisterForm> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.asset(
-              ImageAssets.authImage,
-              height: MediaQuery.of(context).size.height * 0.15,
-              width: MediaQuery.of(context).size.width * 0.15,
-            ),
+            // Image.asset(
+            //   ImageAssets.authImage,
+            //   height: MediaQuery.of(context).size.height * 0.15,
+            //   width: MediaQuery.of(context).size.width * 0.15,
+            // ),
+            Center(
+                child: RegisterProfilePictureWidget(
+                    onImagePicked: _onImagePicked)),
             const VerticalSpace(0.02),
             _buildLabel("اسم المستخدم"),
             const VerticalSpace(0.01),
@@ -143,6 +156,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     passwordConfirmation:
                         passwordConfirmationController.text.trim(),
                     context: context,
+                    imageFile: _imageFile, // Pass the image file
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(

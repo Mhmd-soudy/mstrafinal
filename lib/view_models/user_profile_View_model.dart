@@ -27,11 +27,8 @@ class UserProfileViewModel extends ChangeNotifier {
   }
 
   // Update User Data with optional image
-  Future<void> updateUser(
-    BuildContext context,
-    User updatedUser, {
-    File? imageFile,
-  }) async {
+  Future<void> updateUser(BuildContext context, User updatedUser,
+      {File? imageFile}) async {
     _isUpdating = true;
     notifyListeners();
 
@@ -39,35 +36,32 @@ class UserProfileViewModel extends ChangeNotifier {
       final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('access_token');
-
-      // Handle case where user is not logged in
       if (accessToken == null) {
         _errorMessage = 'User not logged in';
         return;
       }
 
-      // Prepare a map to hold only the changed fields
+      // Create a map to hold the updated fields
       final Map<String, String> updates = {};
 
+      // Check each field in the user model and add only the changed fields
       if (_user?.name != updatedUser.name) updates['name'] = updatedUser.name;
       if (_user?.email != updatedUser.email)
         updates['email'] = updatedUser.email;
       if (_user?.phone != updatedUser.phone)
         updates['phone'] = updatedUser.phone;
 
-      // Return if there are no changes and no image selected
+      // If there are no field changes but there's an image, still proceed
       if (updates.isEmpty && imageFile == null) {
         _errorMessage = 'No changes detected';
         return;
       }
 
-      // Prepare the multipart request for updating the profile
       var request = http.MultipartRequest(
         'POST',
         Uri.parse(AppUrl.updateProfileEndPoint),
       );
 
-      // Set headers
       request.headers.addAll({
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'multipart/form-data',
@@ -78,7 +72,7 @@ class UserProfileViewModel extends ChangeNotifier {
         request.fields[key] = value;
       });
 
-      // Add the image file if present
+      // If there's an image file, add it to the request
       if (imageFile != null) {
         String fileName = basename(imageFile.path);
         request.files.add(
@@ -87,20 +81,26 @@ class UserProfileViewModel extends ChangeNotifier {
         );
       }
 
-      // Send the request and capture the response
+      // Send the request
       var response = await request.send();
-      var responseBody = await response.stream.bytesToString();
 
-      // Check response status and update user data accordingly
+      print('Response status: ${response.statusCode}');
+      var responseBody = await response.stream.bytesToString();
+      print('Response body: $responseBody');
+
       if (response.statusCode == 200) {
+        final responseData = jsonDecode(responseBody);
+        final newImage = responseData[
+            'image']; // Adjust according to your API response structure
         // Update the local user model with the new values
         _user = User(
           id: _user?.id ?? updatedUser.id,
           name: updates['name'] ?? _user?.name ?? '',
           email: updates['email'] ?? _user?.email ?? '',
           phone: updates['phone'] ?? _user?.phone ?? '',
-          image:
-              imageFile != null ? basename(imageFile.path) : _user?.image ?? "",
+          image: imageFile != null
+              ? basename(imageFile.path)
+              : _user?.image ?? updatedUser.image ?? "",
           emailVerifiedAt:
               _user?.emailVerifiedAt ?? updatedUser.emailVerifiedAt,
           createdAt: _user?.createdAt ?? updatedUser.createdAt,
@@ -113,30 +113,26 @@ class UserProfileViewModel extends ChangeNotifier {
 
         // Update the user in AuthViewModel as well
         authViewModel.updateUser(_user!);
+        // Update user image in SharedPreferences
+        await prefs.setString('user_image', newImage ?? '');
 
-        // Notify success
-        _showSnackBar(context, 'Profile updated successfully!');
+        // Clear image cache to ensure the new image is loaded
+        Image.network(
+          AppUrl.NetworkStorage + _user!.image!,
+          fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height * 0.15,
+          width: MediaQuery.of(context).size.height * 0.15,
+        ).image.evict(); // This clears the cache of the old image
       } else {
-        _errorMessage = 'Error updating user data: ${response.statusCode}';
-        print('Update failed: $responseBody');
+        _errorMessage = 'Error updating user data';
       }
     } catch (e) {
-      _errorMessage = 'An error occurred while updating profile';
-      print('Exception: $e');
+      _errorMessage = 'An error occurred';
+      print(e);
     } finally {
       _isUpdating = false;
       notifyListeners();
     }
-  }
-
-  // Utility function to display messages in a SnackBar
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 }
 // import 'dart:convert';
