@@ -28,7 +28,7 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
         // Videos Tile
         ExpansionTile(
           title: Text(
-            'Videos',
+            'الفيديوهات',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           children: widget.course.videos.isNotEmpty
@@ -47,19 +47,23 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
                       ),
                       padding: const EdgeInsets.all(16),
                       margin: EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("12:00"), // Placeholder for video duration
-                          Text(video.title),
-                        ],
+                      child: Center(
+                        child: Text(video.title),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   children: [
+                        //     // Text("12:00"),
+                        //     // Placeholder for video duration
+                        //     Text(video.title),
+                        //   ],
+                        // ),
                       ),
                     ),
                   );
                 }).toList()
               : [
                   ListTile(
-                    title: Text('No videos available'),
+                    title: Text('لا يوجد فيديوهات متاحة'),
                   ),
                 ],
         ),
@@ -68,7 +72,7 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
         // Records Tile
         ExpansionTile(
           title: Text(
-            'Records',
+            'الريكوردات',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           children: widget.course.records.isNotEmpty
@@ -85,19 +89,20 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
                           borderRadius: BorderRadius.all(Radius.circular(16))),
                       padding: const EdgeInsets.all(16),
                       margin: EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("12:00"), // Placeholder for record duration
-                          Text(record.title),
-                        ],
-                      ),
+                      child: Text(record.title),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Text("12:00"), // Placeholder for record duration
+                      //     Text(record.title),
+                      //   ],
+                      // ),
                     ),
                   );
                 }).toList()
               : [
                   ListTile(
-                    title: Text('No records available'),
+                    title: Text('لا يوجد ريكوردات متاحة'),
                   ),
                 ],
         ),
@@ -106,7 +111,7 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
         // PDFs Tile
         ExpansionTile(
           title: Text(
-            'PDFs',
+            'الملفات',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           children: widget.course.pdfs.isNotEmpty
@@ -123,20 +128,21 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
                           borderRadius: BorderRadius.all(Radius.circular(16))),
                       padding: const EdgeInsets.all(16),
                       margin: EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                              "12:00"), // Placeholder for PDF details, if needed
-                          Text(pdf.title),
-                        ],
-                      ),
+                      child: Text(pdf.title),
+                      //  Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Text(
+                      //         "12:00"), // Placeholder for PDF details, if needed
+                      //     Text(pdf.title),
+                      //   ],
+                      // ),
                     ),
                   );
                 }).toList()
               : [
                   ListTile(
-                    title: Text('No PDFs available'),
+                    title: Text('لا يوجد ملفات متاحة'),
                   ),
                 ],
         ),

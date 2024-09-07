@@ -211,18 +211,18 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 ),
                                 Divider(color: Colors.grey[300], height: 1),
-                                ListTile(
-                                  onTap: () {
-                                    Navigator.pushNamed(context,
-                                        RoutesManager.teamMembersScreen);
-                                  },
-                                  leading: Icon(Icons.info,
-                                      color: Colors.greenAccent),
-                                  title: Text("about us",
-                                      style: TextStyle(fontSize: 18)),
-                                  trailing: Icon(Icons.arrow_forward_ios,
-                                      color: Colors.grey),
-                                ),
+                                // ListTile(
+                                //   onTap: () {
+                                //     Navigator.pushNamed(context,
+                                //         RoutesManager.teamMembersScreen);
+                                //   },
+                                //   leading: Icon(Icons.info,
+                                //       color: Colors.greenAccent),
+                                //   title: Text("about us",
+                                //       style: TextStyle(fontSize: 18)),
+                                //   trailing: Icon(Icons.arrow_forward_ios,
+                                //       color: Colors.grey),
+                                // ),
                               ],
                             ),
                           ),

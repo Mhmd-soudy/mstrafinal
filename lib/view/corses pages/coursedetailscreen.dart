@@ -6,6 +6,7 @@ import 'package:mstra/res/app_url.dart';
 import 'package:mstra/routes/routes_manager.dart';
 import 'package:mstra/view/corses%20pages/expandable_content_list.dart';
 import 'package:mstra/view/corses%20pages/pdf_viewer_screen%20.dart';
+import 'package:mstra/view/corses%20pages/related_courses.dart';
 import 'package:mstra/view_models/course_detail_view_model.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 // import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -55,40 +56,51 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   ) {
     final String htmlContent = '''
   <html>
-    <head>
-      <style>
-        body { 
-          margin: 0; 
-          padding: 0; 
-          height: 100vh; 
-          overflow: hidden; 
-        }
-        .iframe-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border: 0;
-        }
-        .iframe-container iframe {
-          width: 100%;
-          height: 100%;
-          border: 0;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="iframe-container">
-        <iframe
-          src="https://iframe.mediadelivery.net/embed/$mediaplayer/$url?autoplay=false&loop=false&muted=false&preload=true&responsive=true"
-          loading="lazy"
-          allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
-          allowfullscreen="true">
-        </iframe>
-      </div>
-    </body>
-  </html>
+  <head>
+    <style>
+      body { 
+        margin: 0; 
+        padding: 0; 
+        height: 100vh; 
+        position: relative;
+        overflow: hidden; 
+      }
+      .iframe-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50% , -50%);
+        border-radius: 28px;
+        overflow: hidden; 
+        width: 90%;
+        height: 90%;
+        border: 0;
+        
+        
+    
+        
+      }
+      .iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        font-size: 50px;
+        border: 0;
+        
+
+      }
+    </style>
+  </head>
+  <body>
+    <div class="iframe-container">
+      <iframe
+        src="https://iframe.mediadelivery.net/embed/$mediaplayer/$url?autoplay=false&loop=false&muted=false&preload=true&responsive=true"
+        loading="lazy"
+        allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
+        allowfullscreen="true">
+      </iframe>
+    </div>
+  </body>
+</html>
   ''';
 
     controller.loadHtmlString(htmlContent);
@@ -151,7 +163,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           Center(
                             child: Container(
                               height: MediaQuery.of(context).size.height * 0.4,
-                              width: MediaQuery.of(context).size.width * 0.8,
+                              width: MediaQuery.of(context).size.width * 0.85,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16.0),
                                 boxShadow: [
@@ -281,107 +293,129 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   //   ),
                   const SizedBox(height: 16),
                   ExpandableContentTile(
-                      course: course,
-                      onVideoTap: (videoId, video_is_free) async {
-                        print(
-                            'Video ID tapped============================================== : ${video_is_free}');
-                        // print(
-                        //     "video is_free================================================ : ${viewModel.video!.is_free}");
-                        if (accessToken != null &&
-                            (course.hasCourse || video_is_free == 1)) {
-                          await viewModel.fetchSingleVideo(
-                              videoId, course.id, context);
+                    course: course,
+                    onVideoTap: (videoId, video_is_free) async {
+                      print(
+                          'Video ID tapped============================================== : ${video_is_free}');
 
-                          if (viewModel.video != null &&
-                              viewModel.video!.url != null) {
-                            setState(() {
-                              videoiframe = true;
-                              mediaplayer = "285026";
-                              contentUrl = viewModel.video!.url!;
-                              loadHtmlContent(contentUrl!);
-                            });
+                      // Check if accessToken is null
+                      if (accessToken == null) {
+                        // Show SnackBar to prompt login
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('من فضلك سجل الدخول اولا')),
+                        );
+                        return; // Exit early if not logged in
+                      }
 
-                            // Load the video content into the WebView
+                      if (accessToken != null &&
+                          (course.hasCourse || video_is_free == 1)) {
+                        await viewModel.fetchSingleVideo(
+                            videoId, course.id, context);
+
+                        if (viewModel.video != null &&
+                            viewModel.video!.url != null) {
+                          setState(() {
+                            videoiframe = true;
+                            mediaplayer = "285026";
+                            contentUrl = viewModel.video!.url!;
+                            loadHtmlContent(contentUrl!);
+                          });
+                          // Load the video content into the WebView
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Failed to load video.')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('انت غير مشترك فى هذا الكورس')),
+                        );
+                      }
+                    },
+                    onRecordTap: (recordId) async {
+                      print('ٌRecord ID tapped: $recordId');
+                      if (course.hasCourse) {
+                        await viewModel.fetchSingleRecord(
+                            recordId, course.id, context);
+
+                        if (viewModel.record != null &&
+                            viewModel.record!.url != null) {
+                          setState(() {
+                            videoiframe = true;
+                            mediaplayer = "287473";
+                            contentUrl = viewModel.record!.url!;
+                            loadHtmlContent(contentUrl!);
+                          });
+                          // Load the record content into the WebView
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Failed to load record.')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('انت غير مشترك فى هذا الكورس')),
+                        );
+                      }
+                    },
+                    onPdfTap: (pdfId) async {
+                      print('PDF ID tapped: $pdfId');
+                      if (course.hasCourse) {
+                        await viewModel.fetchSinglePdf(
+                            pdfId, course.id, context);
+
+                        if (viewModel.pdf != null &&
+                            viewModel.pdf!.url != null) {
+                          final pdfUrl = Uri.parse(
+                              "${AppUrl.NetworkStorage}${viewModel.pdf!.url}");
+                          print(pdfUrl);
+
+                          // Launch the URL in the external browser
+                          if (await canLaunchUrl(pdfUrl)) {
+                            await launchUrl(
+                              pdfUrl,
+                              mode: LaunchMode
+                                  .externalApplication, // Ensure it opens in an external browser
+                            );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Failed to load video.')),
+                                  content: Text('Could not launch PDF URL.')),
                             );
                           }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('انت غير مشترك فى هذا الكورس')),
+                                content: Text('Failed to load PDF.')),
                           );
                         }
-                      },
-                      onRecordTap: (recordId) async {
-                        print('ٌRecord ID tapped: $recordId');
-                        if (course.hasCourse) {
-                          await viewModel.fetchSingleRecord(
-                              recordId, course.id, context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('انت غير مشترك فى هذا الكورس')),
+                        );
+                      }
+                    },
+                  ),
+                  Center(
+                    child: Text(
+                      "الكورسات المشابهة",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: ColorManager.grey),
+                    ),
+                  ),
 
-                          if (viewModel.record != null &&
-                              viewModel.record!.url != null) {
-                            setState(() {
-                              videoiframe = true;
-                              mediaplayer = "287473";
-                              contentUrl = viewModel.record!.url!;
-                              loadHtmlContent(contentUrl!);
-                            });
-
-                            // Load the record content into the WebView
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Failed to load record.')),
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('انت غير مشترك فى هذا الكورس')),
-                          );
-                        }
-                      },
-                      onPdfTap: (pdfId) async {
-                        print('PDF ID tapped: $pdfId');
-                        if (course.hasCourse) {
-                          await viewModel.fetchSinglePdf(
-                              pdfId, course.id, context);
-
-                          if (viewModel.pdf != null &&
-                              viewModel.pdf!.url != null) {
-                            final pdfUrl = Uri.parse(
-                                "${AppUrl.NetworkStorage}${viewModel.pdf!.url}");
-                            print(pdfUrl);
-
-                            // Launch the URL in the external browser
-                            if (await canLaunchUrl(pdfUrl)) {
-                              await launchUrl(
-                                pdfUrl,
-                                mode: LaunchMode
-                                    .externalApplication, // Ensure it opens in an external browser
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Could not launch PDF URL.')),
-                              );
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Failed to load PDF.')),
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('انت غير مشترك فى هذا الكورس')),
-                          );
-                        }
-                      }),
+                  RelatedCourses(
+                    categoriesId: viewModel.course!.categories.first.id,
+                    courseslug: course.slug,
+                  ),
                 ],
               ),
             ),

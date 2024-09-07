@@ -274,7 +274,7 @@ class AuthViewModel with ChangeNotifier {
           await prefs.clear(); // Clear all preferences
 
           notifyListeners();
-          Navigator.pushReplacementNamed(context, RoutesManager.loginPage);
+          Navigator.pushReplacementNamed(context, RoutesManager.homePage);
         } else {
           throw Exception('Failed to log out');
         }

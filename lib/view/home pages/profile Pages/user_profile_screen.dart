@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mstra/core/widgets/validators.dart';
 import 'package:mstra/models/user_model_auth.dart';
 import 'package:mstra/res/app_url.dart';
+import 'package:mstra/view/corses%20pages/test.dart';
 import 'package:mstra/view_models/user_profile_View_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -105,9 +107,9 @@ class _UserProfileFormState extends State<UserProfileForm> {
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
   File? _imageFile;
-  bool _isLoading = false; // Add this line
-  // Add a field to hold the image file
+  bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
+  final Connectivity _connectivity = Connectivity(); // Connectivity instance
 
   @override
   void initState() {
@@ -134,6 +136,20 @@ class _UserProfileFormState extends State<UserProfileForm> {
     }
   }
 
+  // Check the connectivity status
+  Future<bool> _checkConnectivity() async {
+    var connectivityResult = await _connectivity.checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No internet connection. Please try again later.'),
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
@@ -154,7 +170,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
           children: [
             Center(
               child: GestureDetector(
-                onTap: _pickImage, // Call _pickImage on tap
+                onTap: _pickImage,
                 child: Stack(
                   children: [
                     Container(
@@ -162,7 +178,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                       width: MediaQuery.of(context).size.height * 0.15,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
                             Colors.blueAccent,
                             Colors.lightBlueAccent,
@@ -175,7 +191,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                             color: Colors.black.withOpacity(0.2),
                             spreadRadius: 2,
                             blurRadius: 5,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -215,22 +231,19 @@ class _UserProfileFormState extends State<UserProfileForm> {
                                   ),
                       ),
                     ),
-                    // Add a Positioned widget to place the camera icon at the bottom-right corner
                     Positioned(
                       bottom: 0,
                       right: 0,
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white, // Background color for the icon
+                          color: Colors.white,
                         ),
-                        padding: const EdgeInsets.all(
-                            4), // Padding for better icon appearance
+                        padding: const EdgeInsets.all(4),
                         child: Icon(
                           Icons.camera_alt,
                           color: const Color.fromARGB(255, 82, 174, 88),
-                          size: MediaQuery.of(context).size.width *
-                              0.1, // Adjust size as per your preference
+                          size: MediaQuery.of(context).size.width * 0.1,
                         ),
                       ),
                     ),
@@ -238,9 +251,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -298,11 +309,15 @@ class _UserProfileFormState extends State<UserProfileForm> {
                       const SizedBox(height: 32),
                       ElevatedButton(
                         onPressed: _isLoading
-                            ? null // Disable button if loading
+                            ? null
                             : () async {
                                 if (_formKey.currentState!.validate()) {
+                                  // Check for internet connection
+                                  bool isConnected = await _checkConnectivity();
+                                  if (!isConnected) return;
+
                                   setState(() {
-                                    _isLoading = true; // Start loading
+                                    _isLoading = true;
                                   });
 
                                   final updatedUser = User(
@@ -317,12 +332,10 @@ class _UserProfileFormState extends State<UserProfileForm> {
                                         _phoneNumberController.text.isNotEmpty
                                             ? _phoneNumberController.text
                                             : widget.user.phone,
-                                    image: widget.user
-                                        .image, // Keep the existing image if no new one
+                                    image: widget.user.image,
                                   );
 
                                   try {
-                                    // Pass the image file to the updateUser method
                                     await viewModel.updateUser(
                                         context, updatedUser,
                                         imageFile: _imageFile);
@@ -339,7 +352,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                                           .showSnackBar(
                                         const SnackBar(
                                             content: Text(
-                                                'Profile updated successfully!')),
+                                                'تم تغيير البيانات بنجاح')),
                                       );
                                     }
                                   } catch (e) {
@@ -350,7 +363,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                                     );
                                   } finally {
                                     setState(() {
-                                      _isLoading = false; // End loading
+                                      _isLoading = false;
                                     });
                                   }
                                 }
@@ -358,7 +371,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               const Color.fromARGB(255, 93, 142, 92),
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -366,7 +379,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
                           elevation: 5,
                         ),
                         child: _isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 height: 24,
                                 width: 24,
                                 child: CircularProgressIndicator(
@@ -375,11 +388,19 @@ class _UserProfileFormState extends State<UserProfileForm> {
                               )
                             : const Text('Update Profile'),
                       ),
+                      // ElevatedButton(
+                      //     onPressed: () {
+                      //       Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //               builder: (context) => TestPage()));
+                      //     },
+                      //     child: Text("Test")),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.03,
                       ),
                       Center(
-                        child: Text(
+                        child: const Text(
                           "لو محتاج تغير كلمة المرور كلمنا على",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
@@ -390,14 +411,11 @@ class _UserProfileFormState extends State<UserProfileForm> {
                       ),
                       TextButton(
                         onPressed: () => _launchURL(
-                            'https://www.facebook.com/share/GhxRYw5wfiscS9Bj/?mibextid=qi2Omg'), // Replace with actual URL
+                            'https://www.facebook.com/share/GhxRYw5wfiscS9Bj/?mibextid=qi2Omg'),
                         child: const Text(
-                          'صفحة الفيسبوك',
+                          'Facebook',
                           style: TextStyle(
-                            fontSize: 18,
-                            decoration: TextDecoration.underline,
-                          ),
-                          textAlign: TextAlign.center,
+                              fontWeight: FontWeight.w600, fontSize: 16.0),
                         ),
                       ),
                     ],
@@ -410,15 +428,7 @@ class _UserProfileFormState extends State<UserProfileForm> {
       ),
     );
   }
-
-  Future<Map<String, String?>> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final name = prefs.getString('name');
-    final image = prefs.getString("image");
-    return {'name': name, "image": image};
-  }
 }
-
 
 
 

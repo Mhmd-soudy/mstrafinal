@@ -94,6 +94,10 @@ flutter:
     - assets/images/no-connection-concept-illustration_114360-5987.png
     - assets/images/vodaphone-6Z1kYog6.png
     - assets/images/mstra_icon.jpg
+    - assets/images/MhmdSoudy.jpg
+    - assets/images/mohamedGamal.jpg
+    - assets/images/hussein.jpg
+    - assets/images/Bardessy.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

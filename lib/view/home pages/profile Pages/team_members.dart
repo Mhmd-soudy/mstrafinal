@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mstra/core/utilis/assets_manager.dart';
 
 class TeamMembers extends StatelessWidget {
   const TeamMembers({super.key});
@@ -44,28 +45,28 @@ class TeamMembers extends StatelessWidget {
                     name: 'د. محمد جمال',
                     title: 'مؤسس ومدير تنفيذي',
                     subtitle: 'Founder and CEO',
-                    imageUrl: 'assets/images/team_member_1.png',
+                    imageUrl: ImageAssets.mohamedGamal,
                   ),
                   SizedBox(height: 16.0),
                   TeamMemberCard(
                     name: 'د. محمد سعودي',
                     title: 'مؤسس مشارك ومدير مالي',
                     subtitle: 'Co-founder and CFO',
-                    imageUrl: 'assets/images/team_member_2.png',
+                    imageUrl: ImageAssets.soudy,
                   ),
                   SizedBox(height: 16.0),
                   TeamMemberCard(
                     name: 'د. حسين إبراهيم',
                     title: 'مؤسس مشارك',
                     subtitle: 'Co-founder',
-                    imageUrl: 'assets/images/team_member_3.png',
+                    imageUrl: ImageAssets.hussein,
                   ),
                   SizedBox(height: 16.0),
                   TeamMemberCard(
-                    name: 'د. عمر محمد',
+                    name: 'د. عمر برديسى',
                     title: 'مؤسس مشارك ورئيس قسم التسويق',
                     subtitle: 'Co-founder and Head of Marketing Department',
-                    imageUrl: 'assets/images/team_member_4.png',
+                    imageUrl: ImageAssets.bardessy,
                   ),
                 ],
               ),
