@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:mstra/models/course_model.dart';
+import 'package:mstra/models/quiz_questions_model.dart';
+import 'package:mstra/view/corses%20pages/quizes/quize_screen.dart';
+import 'package:mstra/view/corses%20pages/test.dart';
 
 class ExpandableContentTile extends StatefulWidget {
   final CourseModel course;
   final Function(int, int) onVideoTap; // Add the onVideoTap callback
   final Function(int) onRecordTap;
   final Function(int) onPdfTap;
+  // final Function(int) onQuizTap;
   final int? videoIs_free;
-  const ExpandableContentTile(
-      {Key? key,
-      required this.course,
-      required this.onVideoTap, // Initialize the callback
-      required this.onRecordTap,
-      required this.onPdfTap,
-      this.videoIs_free})
-      : super(key: key);
+  const ExpandableContentTile({
+    Key? key,
+    required this.course,
+    required this.onVideoTap, // Initialize the callback
+    required this.onRecordTap,
+    required this.onPdfTap,
+    this.videoIs_free,
+    // required this.onQuizTap
+  }) : super(key: key);
 
   @override
   State<ExpandableContentTile> createState() => _ExpandableContentTileState();
@@ -143,6 +148,76 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
               : [
                   ListTile(
                     title: Text('لا يوجد ملفات متاحة'),
+                  ),
+                ],
+        ),
+        // ElevatedButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) => QuizScreen(
+        //                     quizId: 1,
+        //                     courseId: widget.course.id,
+        //                   )
+        //               // TestPage()
+        //               ));
+        //     },
+        //     child: Text("quiz 1")),
+        ExpansionTile(
+          title: Text(
+            'الاختبارات',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          children: widget.course.quizzes.isNotEmpty
+              ? widget.course.quizzes.map((quiz) {
+                  return GestureDetector(
+                    onTap: () {
+                      // Navigate to the Quiz Screen
+                      if (widget.course.hasCourse) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuizScreen(
+                              quizId: quiz.id, // Pass the quiz id
+                              courseId: widget.course.id,
+                              // Pass the course id
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('انت غير مشترك فى الكورس')),
+                        );
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: widget.course.hasCourse
+                            ? Colors.green[200]
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      margin: EdgeInsets.all(8),
+                      child: Center(
+                        child: Text(quiz.title),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   children: [
+                        //     // Text("12:00"),
+                        //     // Placeholder for video duration
+                        //     Text(video.title),
+                        //   ],
+                        // ),
+                      ),
+                    ),
+                  );
+                }).toList()
+              : [
+                  ListTile(
+                    title: Text('لا يوجد اختبارات متاحة'),
                   ),
                 ],
         ),

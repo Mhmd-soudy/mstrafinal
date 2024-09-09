@@ -45,11 +45,21 @@ class UserProfileViewModel extends ChangeNotifier {
       final Map<String, String> updates = {};
 
       // Check each field in the user model and add only the changed fields
-      if (_user?.name != updatedUser.name) updates['name'] = updatedUser.name;
-      if (_user?.email != updatedUser.email)
+      if (_user?.name != updatedUser.name && updatedUser.name.isNotEmpty)
+        updates['name'] = updatedUser.name;
+      if (_user?.email != updatedUser.email && updatedUser.email.isNotEmpty)
         updates['email'] = updatedUser.email;
-      if (_user?.phone != updatedUser.phone)
+      if (_user?.phone != updatedUser.phone && updatedUser.phone.isNotEmpty)
         updates['phone'] = updatedUser.phone;
+      if (_user?.password != updatedUser.password &&
+          updatedUser.password!.isNotEmpty)
+        updates["password"] = updatedUser.password!;
+      if (_user?.passwordConfirmation != updatedUser.passwordConfirmation &&
+          updatedUser.passwordConfirmation!.isNotEmpty)
+        updates["password_confirmation"] = updatedUser.passwordConfirmation!;
+
+      // Log the updates map
+      print("Updates: $updates");
 
       // If there are no field changes but there's an image, still proceed
       if (updates.isEmpty && imageFile == null) {

@@ -3,6 +3,7 @@ import 'package:mstra/models/pdf_model.dart';
 import 'package:mstra/models/record_model.dart';
 import 'package:mstra/models/user_model_courses.dart';
 import 'package:mstra/models/video_model.dart';
+import 'package:mstra/models/quiz_model.dart'; // Import your quiz model
 
 class CourseModel {
   final int id;
@@ -13,7 +14,7 @@ class CourseModel {
   final int? userId;
   final int usersCount;
   final String price;
-  final int? students_count;
+  final int? studentsCount;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int buyersCount;
@@ -23,26 +24,29 @@ class CourseModel {
   final List<VideoModel> videos;
   final List<RecordModel> records;
   final List<PdfModel> pdfs;
+  final List<QuizModel> quizzes; // Add quizzes
 
-  CourseModel(
-      {required this.id,
-      required this.name,
-      required this.slug,
-      required this.description,
-      required this.image,
-      required this.userId,
-      required this.usersCount,
-      required this.price,
-      required this.createdAt,
-      required this.updatedAt,
-      required this.buyersCount,
-      required this.hasCourse,
-      required this.user,
-      required this.categories,
-      required this.videos,
-      required this.records,
-      required this.pdfs,
-      this.students_count});
+  CourseModel({
+    required this.id,
+    required this.name,
+    required this.slug,
+    required this.description,
+    required this.image,
+    required this.userId,
+    required this.usersCount,
+    required this.price,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.buyersCount,
+    required this.hasCourse,
+    required this.user,
+    required this.categories,
+    required this.videos,
+    required this.records,
+    required this.pdfs,
+    required this.quizzes, // Initialize quizzes
+    this.studentsCount,
+  });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
     return CourseModel(
@@ -53,7 +57,7 @@ class CourseModel {
       image: json['image'] ?? '',
       userId: json['user_id'] ?? 0,
       usersCount: json['users_count'] ?? 0,
-      students_count: json["students_count"] ?? 0,
+      studentsCount: json["students_count"] ?? 0,
       price: json['price'] ?? '',
       createdAt:
           DateTime.parse(json['created_at'] ?? DateTime.now().toString()),
@@ -73,6 +77,9 @@ class CourseModel {
           .toList(),
       pdfs: (json['pdfs'] as List? ?? [])
           .map((e) => PdfModel.fromJson(e))
+          .toList(),
+      quizzes: (json['quizzes'] as List? ?? []) // Add quizzes parsing
+          .map((e) => QuizModel.fromJson(e))
           .toList(),
     );
   }

@@ -106,6 +106,8 @@ class _UserProfileFormState extends State<UserProfileForm> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
+  late TextEditingController _passwordController;
+  late TextEditingController _passwordConfirmationController;
   File? _imageFile;
   bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
@@ -117,6 +119,9 @@ class _UserProfileFormState extends State<UserProfileForm> {
     _nameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
     _phoneNumberController = TextEditingController(text: widget.user.phone);
+    _passwordController = TextEditingController(text: widget.user.password);
+    _passwordConfirmationController =
+        TextEditingController(text: widget.user.password);
   }
 
   @override
@@ -124,6 +129,8 @@ class _UserProfileFormState extends State<UserProfileForm> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneNumberController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmationController.dispose();
     super.dispose();
   }
 
@@ -306,6 +313,38 @@ class _UserProfileFormState extends State<UserProfileForm> {
                         keyboardType: TextInputType.phone,
                         validator: validateUpdatePhoneNumber,
                       ),
+                      // Password field
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                        ),
+                        obscureText: true,
+                        validator:
+                            validateUpdatePassword, // Using your password validator
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Password Confirmation field
+                      TextFormField(
+                        controller: _passwordConfirmationController,
+                        decoration: const InputDecoration(
+                          labelText: 'Confirm Password',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value != _passwordController.text) {
+                            return "Passwords do not match";
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 32),
                       ElevatedButton(
                         onPressed: _isLoading
@@ -333,6 +372,16 @@ class _UserProfileFormState extends State<UserProfileForm> {
                                             ? _phoneNumberController.text
                                             : widget.user.phone,
                                     image: widget.user.image,
+                                    password:
+                                        _passwordController.text.isNotEmpty
+                                            ? _passwordController.text
+                                            : "",
+                                    passwordConfirmation:
+                                        _passwordConfirmationController
+                                                .text.isNotEmpty
+                                            ? _passwordConfirmationController
+                                                .text
+                                            : "",
                                   );
 
                                   try {
@@ -388,35 +437,9 @@ class _UserProfileFormState extends State<UserProfileForm> {
                               )
                             : const Text('Update Profile'),
                       ),
-                      // ElevatedButton(
-                      //     onPressed: () {
-                      //       Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => TestPage()));
-                      //     },
-                      //     child: Text("Test")),
+
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.03,
-                      ),
-                      Center(
-                        child: const Text(
-                          "لو محتاج تغير كلمة المرور كلمنا على",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => _launchURL(
-                            'https://www.facebook.com/share/GhxRYw5wfiscS9Bj/?mibextid=qi2Omg'),
-                        child: const Text(
-                          'Facebook',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 16.0),
-                        ),
                       ),
                     ],
                   ),

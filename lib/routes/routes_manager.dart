@@ -3,7 +3,7 @@ import 'package:mstra/view/Auth/login/login_page.dart';
 import 'package:mstra/view/Auth/register/register_page.dart';
 import 'package:mstra/view/corses%20pages/Subscription%20page.dart';
 import 'package:mstra/view/corses%20pages/course_search_screen.dart';
-import 'package:mstra/view/corses%20pages/coursedetailscreen.dart';
+import 'package:mstra/view/corses%20pages/course_details/coursedetailscreen.dart';
 
 import 'package:mstra/view/home%20pages/myhome.dart';
 import 'package:mstra/view/home%20pages/profile%20Pages/team_members.dart';
@@ -39,9 +39,11 @@ class RoutesManager {
       case loginPage:
         return MaterialPageRoute(builder: (context) => const LoginPage());
       case subscriptionPage:
-        final coursePrice =
-              settings.arguments as String;
-        return MaterialPageRoute(builder: (context) => Subscriptionpage(coursePrice: coursePrice,));
+        final coursePrice = settings.arguments as String;
+        return MaterialPageRoute(
+            builder: (context) => Subscriptionpage(
+                  coursePrice: coursePrice,
+                ));
       case teamMembersScreen:
         return MaterialPageRoute(builder: (context) => const TeamMembers());
 

@@ -3,10 +3,11 @@ import 'package:mstra/core/utilis/assets_manager.dart';
 import 'package:mstra/core/utilis/color_manager.dart';
 import 'package:mstra/models/pdf_model.dart';
 import 'package:mstra/res/app_url.dart';
+import 'package:mstra/res/app_url.dart';
 import 'package:mstra/routes/routes_manager.dart';
-import 'package:mstra/view/corses%20pages/expandable_content_list.dart';
+import 'package:mstra/view/corses%20pages/course_details/expandable_content_list.dart';
 import 'package:mstra/view/corses%20pages/pdf_viewer_screen%20.dart';
-import 'package:mstra/view/corses%20pages/related_courses.dart';
+import 'package:mstra/view/corses%20pages/course_details/related_courses.dart';
 import 'package:mstra/view_models/course_detail_view_model.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 // import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -192,7 +193,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text("(${course.students_count}) عدد طلاب الكورس",
+                  Text("(${course.studentsCount}) عدد طلاب الكورس",
                       style: Theme.of(context).textTheme.bodyLarge),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -300,6 +301,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
                       // Check if accessToken is null
                       if (accessToken == null) {
+                        Navigator.pushNamed(context, RoutesManager.loginPage);
                         // Show SnackBar to prompt login
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

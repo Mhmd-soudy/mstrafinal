@@ -7,6 +7,7 @@ import 'package:mstra/services/connectivity_service.dart';
 import 'package:mstra/view_models/auth_view_model.dart';
 import 'package:mstra/view_models/categories_view_model.dart';
 import 'package:mstra/view_models/course_view_model.dart';
+import 'package:mstra/view_models/quiz_view_model.dart';
 import 'package:mstra/view_models/splash_view_model.dart';
 import 'package:mstra/view_models/user_profile_View_model.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +35,7 @@ void main() {
         ),
         ChangeNotifierProvider(create: (_) => MainCategoryViewModel()),
         ChangeNotifierProvider(create: (_) => UserProfileViewModel()),
+        ChangeNotifierProvider(create: (_) => QuizViewModel()),
       ],
       child: const MyApp(),
     ),
