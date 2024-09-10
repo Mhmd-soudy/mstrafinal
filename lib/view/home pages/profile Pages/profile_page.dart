@@ -4,7 +4,9 @@ import 'package:mstra/core/utilis/gradient_background_color.dart';
 import 'package:mstra/core/utilis/space_widgets.dart';
 import 'package:mstra/res/app_url.dart';
 import 'package:mstra/routes/routes_manager.dart';
+import 'package:mstra/view/corses%20pages/quizes/quize_screen.dart';
 import 'package:mstra/view/home%20pages/profile%20Pages/componenets.dart';
+import 'package:mstra/view/corses%20pages/quizes/quizzes_results.dart';
 import 'package:mstra/view_models/auth_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,7 +43,7 @@ class ProfilePage extends StatelessWidget {
           );
         } else if (snapshot.data == true) {
           // User is logged in, show the profile page
-          return FutureBuilder<Map<String, String?>>(
+          return FutureBuilder<Map<String, dynamic>>(
             future: _loadUserData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -64,6 +66,8 @@ class ProfilePage extends StatelessWidget {
                 final userData = snapshot.data!;
                 final name = userData['name'] ?? 'User';
                 final image = userData["user_image"];
+                final id = userData["id"];
+                final userRole = userData["role"];
 
                 return Scaffold(
                   body: GradientBackground(
@@ -211,18 +215,27 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 ),
                                 Divider(color: Colors.grey[300], height: 1),
-                                // ListTile(
-                                //   onTap: () {
-                                //     Navigator.pushNamed(context,
-                                //         RoutesManager.teamMembersScreen);
-                                //   },
-                                //   leading: Icon(Icons.info,
-                                //       color: Colors.greenAccent),
-                                //   title: Text("about us",
-                                //       style: TextStyle(fontSize: 18)),
-                                //   trailing: Icon(Icons.arrow_forward_ios,
-                                //       color: Colors.grey),
-                                // ),
+                                userRole == "user"
+                                    ? ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      QuizResultsPage(
+                                                          userId: id)));
+                                        },
+                                        leading: Icon(Icons.info,
+                                            color: Colors.greenAccent),
+                                        title: Text("نتائج الاختبارات",
+                                            style: TextStyle(fontSize: 18)),
+                                        trailing: Icon(Icons.arrow_forward_ios,
+                                            color: Colors.grey),
+                                      )
+                                    : SizedBox(
+                                        width: 0,
+                                        height: 0,
+                                      ),
                               ],
                             ),
                           ),
@@ -280,10 +293,12 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Future<Map<String, String?>> _loadUserData() async {
+  Future<Map<String, dynamic>> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final name = prefs.getString('name');
+    final id = prefs.getInt("id");
     final image = prefs.getString("user_image");
-    return {'name': name, "user_image": image};
+    final userRole = prefs.getString("role");
+    return {'name': name, "user_image": image, "id": id, "role": userRole};
   }
 }

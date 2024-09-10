@@ -263,11 +263,9 @@
 //     );
 //   }
 // }
-
 import 'package:flutter/material.dart';
-
-import 'package:mstra/models/quiz_questions_model.dart';
 import 'package:provider/provider.dart';
+import 'package:mstra/models/quiz_questions_model.dart';
 import 'package:mstra/view_models/quiz_view_model.dart';
 import 'package:mstra/core/utilis/color_manager.dart';
 import 'package:mstra/core/utilis/gradient_background_color.dart';
@@ -289,6 +287,7 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   int? userId;
+
   @override
   void initState() {
     super.initState();
@@ -312,7 +311,7 @@ class _QuizScreenState extends State<QuizScreen> {
         if (viewModel.isLoading) {
           return Scaffold(
             appBar: AppBar(
-              title: Text("Quiz "),
+              title: Text("Quiz"),
               shadowColor: ColorManager.grey,
               elevation: 2,
               backgroundColor: ColorManager.primary,
@@ -347,34 +346,31 @@ class _QuizScreenState extends State<QuizScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          question.questionText, // Updated field
+                          question.questionText,
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width *
-                                0.045, // Adaptive font size
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
                         ),
                         SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.02), // Adaptive spacing
+                            height: MediaQuery.of(context).size.height * 0.02),
                         ...question.options.map((option) {
                           return Row(
-                            mainAxisAlignment: MainAxisAlignment
-                                .end, // Align the RadioListTile to the right
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Expanded(
                                 child: RadioListTile<String>(
                                   contentPadding: EdgeInsets.all(0),
                                   title: Text(
-                                    option.optionText, // Updated field
+                                    option.optionText,
                                     style: TextStyle(
                                       fontSize:
                                           MediaQuery.of(context).size.width *
-                                              0.04, // Adaptive font size
+                                              0.04,
                                     ),
                                   ),
-                                  value: option.optionText, // Updated field
+                                  value: option.optionText,
                                   groupValue: viewModel.answers[index],
                                   onChanged: (value) {
                                     setState(() {
@@ -402,13 +398,16 @@ class _QuizScreenState extends State<QuizScreen> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
+                print('Answers: ${viewModel.answers}');
+                print('All answered: ${viewModel.allAnswered}');
+
                 if (viewModel.allAnswered) {
                   int score = calculateScore(
                       viewModel.quiz!.questions, viewModel.answers);
 
                   // Submit the score with quizId and courseId
-                  viewModel.submitUserScore(context, userId!, widget.quizId,
-                      score); // Assuming userId = 1 for now
+                  viewModel.submitUserScore(
+                      context, userId!, widget.quizId, score);
 
                   Navigator.push(
                     context,
@@ -459,24 +458,22 @@ class _QuizScreenState extends State<QuizScreen> {
     for (var i = 0; i < questions.length; i++) {
       final selectedOption = answers[i];
       final correctOption = questions[i].options.firstWhere(
-            (option) => option.optionText == selectedOption, // Updated field
+            (option) => option.optionText == selectedOption,
             orElse: () =>
                 Option(id: 0, questionId: 0, optionText: '', isCorrect: 0),
           );
       if (correctOption.isCorrect == 1) {
         score++;
-      } else if (correctOption.isCorrect == 0) {
-        score;
       }
     }
-    return score < 0 ? 0 : score; // Ensure score doesn't go below 0
+    return score < 0 ? 0 : score;
   }
 }
 
 class QuizResultScreen extends StatelessWidget {
-  final int score; // Receive score from the previous screen
-  final List<QuizQuestions> questions; // Receive questions and answers
-  final Map<int, String> userAnswers; // Receive user's answers
+  final int score;
+  final List<QuizQuestions> questions;
+  final Map<int, String> userAnswers;
 
   const QuizResultScreen({
     Key? key,
