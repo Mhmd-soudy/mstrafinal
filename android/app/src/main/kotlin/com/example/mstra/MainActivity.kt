@@ -1,4 +1,4 @@
-package com.example.mstra
+package com.Mhmd.mstra
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity

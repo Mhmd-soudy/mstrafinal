@@ -12,24 +12,37 @@ String? validateUpdateName(String? value) {
   return null;
 }
 
+// String? validateEmail(String? value) {
+//   if (value == null || value.isEmpty) {
+//     return "email adress required!";
+//   } else if (!RegExp(
+//           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+//       .hasMatch(value)) {
+//     return "invalid email adress";
+//   }
+//   return null;
+// }
+
+// String? validateUpdateEmail(String? value) {
+//   if (value == null || value.isEmpty) {
+//     return null;
+//   } else if (!RegExp(
+//           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+//       .hasMatch(value)) {
+//     return "invalid email adress";
+//   }
+//   return null;
+// }
 String? validateEmail(String? value) {
   if (value == null || value.isEmpty) {
-    return "email adress required!";
-  } else if (!RegExp(
-          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      .hasMatch(value)) {
-    return "invalid email adress";
+    return "Email address required!";
   }
-  return null;
+  return null; // No email format validation, so any input is valid
 }
 
 String? validateUpdateEmail(String? value) {
   if (value == null || value.isEmpty) {
-    return null;
-  } else if (!RegExp(
-          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      .hasMatch(value)) {
-    return "invalid email adress";
+    return "Email address required!";
   }
   return null;
 }
