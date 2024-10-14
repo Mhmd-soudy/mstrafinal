@@ -5,6 +5,7 @@ import 'package:mstra/models/pdf_model.dart';
 import 'package:mstra/res/app_url.dart';
 import 'package:mstra/res/app_url.dart';
 import 'package:mstra/routes/routes_manager.dart';
+import 'package:mstra/view/AudioListPage.dart';
 import 'package:mstra/view/corses%20pages/course_details/expandable_content_list.dart';
 import 'package:mstra/view/corses%20pages/pdf_viewer_screen%20.dart';
 import 'package:mstra/view/corses%20pages/course_details/related_courses.dart';
@@ -196,12 +197,37 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    child: userrole == "teatcher"
-                        ? Text("(${course.studentsCount}) عدد طلاب الكورس",
-                            style: Theme.of(context).textTheme.bodyLarge)
-                        : SizedBox(),
-                  ),
+                  // Container(
+                  //   child: userrole == "teatcher"
+                  //       ? Text("(${course.studentsCount}) عدد طلاب الكورس",
+                  //           style: Theme.of(context).textTheme.bodyLarge)
+                  //       : SizedBox(),
+                  // ),
+                  accessToken != null
+                      ? GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AudioListPage()));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.green[200],
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            margin: EdgeInsets.all(8),
+                            child: Center(
+                              child: Text("الذهاب الى صفحة التحميلات "),
+                            ),
+                          ),
+                        )
+                      : SizedBox(
+                          height: 0,
+                          width: 0,
+                        ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

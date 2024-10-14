@@ -7,6 +7,7 @@ import 'package:mstra/core/utilis/gradient_background_color.dart';
 import 'package:mstra/models/navigation_model.dart';
 import 'package:mstra/routes/routes_manager.dart';
 import 'package:mstra/services/connectivity_service.dart';
+import 'package:mstra/view/AudioListPage.dart';
 import 'package:mstra/view/home%20pages/CategoriesScreen.dart';
 import 'package:mstra/view/home%20pages/home_page.dart';
 import 'package:mstra/view/home%20pages/my_courses_page.dart';
@@ -107,6 +108,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       'No internet connection',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AudioListPage(),
+                          ),
+                        );
+                      },
+                      child: const Text('الذهاب الى صفحة التحميلات '),
                     ),
                   ],
                 ),

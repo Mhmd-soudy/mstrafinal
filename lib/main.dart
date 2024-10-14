@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:mstra/models/navigation_model.dart';
 import 'package:mstra/routes/routes_manager.dart';
 import 'package:mstra/services/connectivity_service.dart';
+import 'package:mstra/view_models/AudioViewModel.dart';
 import 'package:mstra/view_models/auth_view_model.dart';
 import 'package:mstra/view_models/categories_view_model.dart';
 import 'package:mstra/view_models/course_view_model.dart';
@@ -41,6 +42,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => MainCategoryViewModel()),
         ChangeNotifierProvider(create: (_) => UserProfileViewModel()),
         ChangeNotifierProvider(create: (_) => QuizViewModel()),
+        ChangeNotifierProvider(create: (_) => MediaViewModel()),
       ],
       child: MyApp(),
     ),

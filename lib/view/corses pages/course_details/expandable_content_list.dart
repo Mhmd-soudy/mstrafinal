@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mstra/models/course_model.dart';
 import 'package:mstra/models/quiz_questions_model.dart';
+import 'package:mstra/view/corses%20pages/course_details/audidownloadbutton.dart';
 import 'package:mstra/view/corses%20pages/quizes/quiz_results_for_teacher.dart';
 import 'package:mstra/view/corses%20pages/quizes/quize_screen.dart';
 import 'package:mstra/view/corses%20pages/test.dart';
 import 'package:mstra/view/corses%20pages/quizes/quizzes_results.dart';
+import 'package:mstra/view_models/AudioViewModel.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ExpandableContentTile extends StatefulWidget {
@@ -48,6 +51,8 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaViewModel = Provider.of<MediaViewModel>(context);
+
     return Column(
       children: [
         // Videos Tile
@@ -102,32 +107,45 @@ class _ExpandableContentTileState extends State<ExpandableContentTile> {
           ),
           children: widget.course.records.isNotEmpty
               ? widget.course.records.map((record) {
-                  return GestureDetector(
-                      onTap: () {
-                        // Handle record tap, e.g., navigate to record player or details screen
-                        // Implement your logic here
-                        widget.onRecordTap(record.id);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: widget.course.hasCourse
-                              ? Colors.green[200]
-                              : Colors.grey[200],
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                  return Row(
+                    children: [
+                      Expanded(
+                        // Use Expanded to make the GestureDetector fill available space
+                        child: GestureDetector(
+                          onTap: () {
+                            // Handle record tap, e.g., navigate to record player or details screen
+                            // Implement your logic here
+                            widget.onRecordTap(record.id);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: widget.course.hasCourse
+                                  ? Colors.green[200]
+                                  : Colors.grey[200],
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            margin: EdgeInsets.all(8),
+                            child: Center(
+                              child: Text(record.title),
+                            ),
+                          ),
                         ),
-                        padding: const EdgeInsets.all(16),
-                        margin: EdgeInsets.all(8),
-                        child: Center(
-                          child: Text(record.title),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text("12:00"), // Placeholder for record duration
-                          //     Text(record.title),
-                          //   ],
-                          // ),
-                        ),
-                      ));
+                      ),
+                      // Only show the AudioDownloadButton if the URL exists
+                      record.record_url != null && widget.course.hasCourse
+                          ? Expanded(
+                              child: AudioDownloadButton(
+                                audioUrl: record.record_url!,
+                                filename:
+                                    "${widget.course.name} >>> ${record.title}",
+                              ),
+                            )
+                          : SizedBox
+                              .shrink(), // Use SizedBox.shrink() for better readability
+                    ],
+                  );
                 }).toList()
               : [
                   ListTile(
