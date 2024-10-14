@@ -102,17 +102,17 @@ class _QuizResultsPageState extends State<QuizResultsPage> {
                               ),
                             ],
                           ),
-                          SizedBox(height: screenHeight * 0.01),
+                          SizedBox(height: screenHeight * 0.008),
                           Row(
                             children: [
                               Icon(Icons.star,
                                   color: Colors.teal, size: screenWidth * 0.05),
-                              SizedBox(width: screenWidth * 0.02),
+                              SizedBox(width: screenWidth * 0.015),
                               Expanded(
                                 child: Text(
                                   'Mark: ${result.mark}',
                                   style:
-                                      TextStyle(fontSize: screenWidth * 0.04),
+                                      TextStyle(fontSize: screenWidth * 0.03),
                                 ),
                               ),
                             ],

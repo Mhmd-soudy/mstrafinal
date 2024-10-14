@@ -3,6 +3,7 @@ import 'package:mstra/res/app_url.dart';
 import 'package:mstra/routes/routes_manager.dart';
 import 'package:mstra/view_models/course_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CourseListView extends StatefulWidget {
   @override
@@ -86,7 +87,88 @@ class _CourseListViewState extends State<CourseListView> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             // Course List Section
             viewModel.isLoading
-                ? const Center(child: CircularProgressIndicator())
+                // ? const Center(child: CircularProgressIndicator())
+                ? GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(12.0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing:
+                          MediaQuery.of(context).size.width * 0.015,
+                      mainAxisSpacing:
+                          MediaQuery.of(context).size.height * 0.015,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: 6, // Number of skeletons to show while loading
+                    itemBuilder: (context, index) {
+                      return Skeletonizer(
+                        enabled: true,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          elevation: 6,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.15,
+                                color:
+                                    Colors.grey[300], // Placeholder for image
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.0028),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: MediaQuery.of(context).size.height *
+                                      0.0048,
+                                ),
+                                child: Container(
+                                  height: 15, // Placeholder for course name
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  color: Colors.grey[300],
+                                ),
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.0028),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: MediaQuery.of(context).size.height *
+                                      0.005,
+                                ),
+                                child: Container(
+                                  height: 10, // Placeholder for user name
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.15,
+                                  color: Colors.grey[300],
+                                ),
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.0045),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  right: MediaQuery.of(context).size.height *
+                                      0.0045,
+                                ),
+                                child: Container(
+                                  height: 10, // Placeholder for price text
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.1,
+                                  color: Colors.grey[300],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  )
                 : viewModel.error.isNotEmpty
                     ? Center(child: Text(viewModel.error))
                     : GridView.builder(

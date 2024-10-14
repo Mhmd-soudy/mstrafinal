@@ -13,6 +13,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 // import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -119,7 +120,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           if (viewModel.isLoading) {
             return Scaffold(
               appBar: AppBar(title: const Text('Course Details')),
-              body: const Center(child: CircularProgressIndicator()),
+              body: SkeletonLoading(),
             );
           }
 
@@ -437,4 +438,86 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   // disabledCapture() async {
   //   await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
   // }
+}
+
+class SkeletonLoading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Skeletonizer(
+            enabled: true, // Enable skeleton loading effect
+            // skeleton: SkeletonOptions(
+            //   baseColor: Colors.grey[300]!,
+            //   highlightColor: Colors.grey[100]!,
+            // ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Skeleton for image or video placeholder
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.0),
+                    color: Colors.grey[300],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Skeleton for text placeholders
+                Container(
+                  width: double.infinity,
+                  height: 20.0,
+                  color: Colors.grey[300],
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: 20.0,
+                  color: Colors.grey[300],
+                ),
+                const SizedBox(height: 16),
+
+                // Skeleton for a row of icons or avatars
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.grey[300],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      height: 20.0,
+                      color: Colors.grey[300],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Skeleton for expandable content section placeholder
+                Container(
+                  height: 150.0,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                ),
+                const SizedBox(height: 16),
+
+                // Additional skeletons for other sections
+                Container(
+                  height: 50.0,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

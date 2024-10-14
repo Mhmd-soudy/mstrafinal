@@ -46,6 +46,7 @@ class MainCategory {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<SubCategory> subCategories;
+  bool isLoadingSubCategories; // Add loading state for subcategories
 
   MainCategory({
     required this.id,
@@ -53,6 +54,7 @@ class MainCategory {
     required this.createdAt,
     required this.updatedAt,
     required this.subCategories,
+    this.isLoadingSubCategories = false, // Initialize as not loading
   });
 
   factory MainCategory.fromJson(Map<String, dynamic> json) {
@@ -67,6 +69,7 @@ class MainCategory {
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
       subCategories: subCategories,
+      isLoadingSubCategories: false,
     );
   }
 }

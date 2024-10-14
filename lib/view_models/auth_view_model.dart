@@ -305,47 +305,8 @@ class AuthViewModel with ChangeNotifier {
       setLoading(false);
     }
   }
+
   // Logout with loading indicator
-  // Future<void> logout(BuildContext context) async {
-  //   setLoading(true); // Start loading
-
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     _accessToken = prefs.getString('access_token');
-
-  //     if (_accessToken != null) {
-  //       final url = Uri.parse(AppUrl.logoutEndPoint);
-  //       final response = await http.post(
-  //         url,
-  //         headers: {
-  //           'Authorization': 'Bearer $_accessToken',
-  //         },
-  //       );
-
-  //       if (response.statusCode == 200) {
-  //         _user = null;
-  //         _accessToken = null;
-  //         await prefs.clear(); // Clear all preferences
-
-  //         notifyListeners();
-  //         Navigator.pushReplacementNamed(context, RoutesManager.homePage);
-  //       } else {
-  //         throw Exception('Failed to log out');
-  //       }
-  //     } else {
-  //       throw Exception('No access token found');
-  //     }
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('An error occurred: $e'),
-  //         backgroundColor: Colors.red,
-  //       ),
-  //     );
-  //   } finally {
-  //     setLoading(false); // End loading
-  //   }
-  // }
   Future<void> logout(BuildContext context) async {
     setLoading(true); // Start loading
 
@@ -353,12 +314,6 @@ class AuthViewModel with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _accessToken = prefs.getString('access_token');
 
-      // Clear preferences and reset user regardless of token status
-      _user = null;
-      _accessToken = null;
-      await prefs.clear(); // Clear all preferences
-
-      // Check if the token exists, then attempt a server-side logout
       if (_accessToken != null) {
         final url = Uri.parse(AppUrl.logoutEndPoint);
         final response = await http.post(
@@ -368,19 +323,22 @@ class AuthViewModel with ChangeNotifier {
           },
         );
 
-        // If logout is successful, navigate to the home page
         if (response.statusCode == 200) {
+          _user = null;
+          _accessToken = null;
+          await prefs.clear(); // Clear all preferences
+          print(
+              "=============================================================logedout success");
           notifyListeners();
           Navigator.pushReplacementNamed(context, RoutesManager.homePage);
         } else {
-          throw Exception('Failed to log out from the server');
+          throw Exception('Failed to log out');
         }
       } else {
-        // No access token found (already logged out), navigate to home page
+        // notifyListeners();
         Navigator.pushReplacementNamed(context, RoutesManager.homePage);
       }
     } catch (e) {
-      // Show error message in case of any issues
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
@@ -391,6 +349,62 @@ class AuthViewModel with ChangeNotifier {
       setLoading(false); // End loading
     }
   }
+  // Future<void> logout(BuildContext context) async {
+  //   setLoading(true); // Start loading
+
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     _accessToken = prefs.getString('access_token');
+
+  //     // Clear preferences and reset user regardless of token status
+  //     // _user = null;
+  //     // _accessToken = null;
+  //     // await prefs.clear(); // Clear all preferences
+
+  //     // Check if the token exists, then attempt a server-side logout
+  //     if (_accessToken != null) {
+  //       final url = Uri.parse(AppUrl.logoutEndPoint);
+  //       final response = await http.post(
+  //         url,
+  //         headers: {
+  //           'Authorization': 'Bearer $_accessToken',
+  //         },
+  //       );
+
+  //       // If logout is successful, navigate to the home page
+  //       if (response.statusCode == 200) {
+  //         final responseData = json.decode(response.body);
+  //         final message = responseData['message'] ?? 'Logged out successfully';
+  //         print(
+  //             "=======================================================================loggedout success");
+  //         // Show success message in a SnackBar
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text(message),
+  //             backgroundColor: Colors.green,
+  //           ),
+  //         );
+  //         notifyListeners();
+  //         Navigator.pushReplacementNamed(context, RoutesManager.homePage);
+  //       } else {
+  //         throw Exception('Failed to log out from the server');
+  //       }
+  //     } else {
+  //       // No access token found (already logged out), navigate to home page
+  //       // Navigator.pushReplacementNamed(context, RoutesManager.homePage);
+  //     }
+  //   } catch (e) {
+  //     // Show error message in case of any issues
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('An error occurred: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   } finally {
+  //     setLoading(false); // End loading
+  //   }
+  // }
 
   Future<void> loadAccessToken() async {
     final prefs = await SharedPreferences.getInstance();

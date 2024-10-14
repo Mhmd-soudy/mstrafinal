@@ -8,12 +8,12 @@ class QuizResultsPageForTeachers extends StatelessWidget {
   final int quizId;
   final String quizName;
 
-  const QuizResultsPageForTeachers(
-      {Key? key,
-      required this.courseId,
-      required this.quizId,
-      required this.quizName})
-      : super(key: key);
+  const QuizResultsPageForTeachers({
+    Key? key,
+    required this.courseId,
+    required this.quizId,
+    required this.quizName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +24,14 @@ class QuizResultsPageForTeachers extends StatelessWidget {
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
             return Scaffold(
-              appBar: AppBar(title: Text("quiz Results")),
+              appBar: AppBar(title: Text("Quiz Results")),
               body: const Center(child: CircularProgressIndicator()),
             );
           }
 
           if (viewModel.errorMessage != null) {
             return Scaffold(
-              appBar: AppBar(title: Text("quiz Results")),
+              appBar: AppBar(title: Text("Quiz Results")),
               body: Center(child: Text(viewModel.errorMessage!)),
             );
           }
@@ -42,7 +42,7 @@ class QuizResultsPageForTeachers extends StatelessWidget {
               backgroundColor: Colors.teal,
             ),
             body: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   // Adjust the number of columns based on the screen width
@@ -52,18 +52,18 @@ class QuizResultsPageForTeachers extends StatelessWidget {
                     children: [
                       // Header
                       Container(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16.0),
                         color: Colors.teal[50],
                         child: Text(
                           'Quiz Results',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: MediaQuery.of(context).size.width * 0.06,
                             fontWeight: FontWeight.bold,
                             color: Colors.teal,
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
                       // Data Cards
                       GridView.builder(
@@ -75,7 +75,7 @@ class QuizResultsPageForTeachers extends StatelessWidget {
                               constraints.maxWidth > 600 ? 2 : 1.5,
                         ),
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: viewModel.quizResults.length,
                         itemBuilder: (context, index) {
                           final result = viewModel.quizResults[index];
@@ -86,22 +86,27 @@ class QuizResultsPageForTeachers extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.03),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     result.userName ?? 'Unknown User',
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.045,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 3),
                                   Text(
                                     'Mark: ${result.mark}',
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.04,
                                     ),
                                   ),
                                 ],
