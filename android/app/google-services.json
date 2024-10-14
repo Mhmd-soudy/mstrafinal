@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "853050364771",
+    "project_id": "mstra-app",
+    "storage_bucket": "mstra-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853050364771:android:e9c87ace74a3e1c57d7956",
+        "android_client_info": {
+          "package_name": "com.Mhmd.mstra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw9hrM1wn7_Cg11aPLfE6DCUYd2tBPlcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_windowmanager/flutter_windowmanager.dart';
@@ -7,17 +8,21 @@ import 'package:mstra/services/connectivity_service.dart';
 import 'package:mstra/view_models/auth_view_model.dart';
 import 'package:mstra/view_models/categories_view_model.dart';
 import 'package:mstra/view_models/course_view_model.dart';
+import 'package:mstra/view_models/notifications_view_model.dart';
 import 'package:mstra/view_models/quiz_view_model.dart';
 import 'package:mstra/view_models/splash_view_model.dart';
 import 'package:mstra/view_models/user_profile_View_model.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
     statusBarColor: Colors.transparent,
   ));
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
   runApp(
     MultiProvider(
@@ -37,13 +42,28 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserProfileViewModel()),
         ChangeNotifierProvider(create: (_) => QuizViewModel()),
       ],
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final PushNotificationService _pushNotificationService =
+      PushNotificationService();
+
+  @override
+  void initState() {
+    super.initState();
+    // Pass the context to init method
+    _pushNotificationService.init(context);
+  }
 
   @override
   Widget build(BuildContext context) {

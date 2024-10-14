@@ -35,6 +35,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   String? contentUrl;
   String? mediaplayer;
   String? accessToken;
+  String? userrole;
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   Future<void> _getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     accessToken = prefs.getString('access_token');
+    userrole = prefs.getString("role");
   }
 
 // rec :e58bad8e-75bc-4251-97b0-265e203d7262
@@ -193,14 +195,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text("(${course.studentsCount}) عدد طلاب الكورس",
-                      style: Theme.of(context).textTheme.bodyLarge),
+                  Container(
+                    child: userrole == "teatcher"
+                        ? Text("(${course.studentsCount}) عدد طلاب الكورس",
+                            style: Theme.of(context).textTheme.bodyLarge)
+                        : SizedBox(),
+                  ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
                         child: course.hasCourse
-                            ? SizedBox()
+                            ? const SizedBox()
                             : ElevatedButton(
                                 onPressed: () {
                                   Navigator.pushNamed(
@@ -213,7 +220,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   foregroundColor: Colors.white,
                                   backgroundColor:
                                       const Color.fromARGB(255, 93, 142, 92),
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
@@ -221,7 +228,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   ),
                                   elevation: 5, // Text color
                                 ),
-                                child: Text(
+                                child: const Text(
                                   "اشترك الان",
                                   style: TextStyle(
                                     fontSize: 16, // Slightly larger font size
@@ -267,8 +274,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   ExpansionTile(
                     title: Text(
                       course.slug,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     children: [
                       Text(
@@ -276,7 +283,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       )
                     ],
                   ),
-                  Divider(),
+                  const Divider(),
                   Center(
                     child: Text(
                       "محتوى الكورس",

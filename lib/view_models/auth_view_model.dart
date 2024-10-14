@@ -119,6 +119,81 @@ class AuthViewModel with ChangeNotifier {
     }
   }
 
+  // Future<void> register({
+  //   required String name,
+  //   required String email,
+  //   required String phone,
+  //   required String password,
+  //   required String passwordConfirmation,
+  //   required BuildContext context,
+  //   File? imageFile, // Add this parameter
+  // }) async {
+  //   setLoading(true); // Start loading
+
+  //   try {
+  //     String? androidId = await getAndroidId();
+  //     final url = Uri.parse(AppUrl.registerEndPoint);
+
+  //     final request = http.MultipartRequest('POST', url)
+  //       ..headers['Content-Type'] = 'multipart/form-data'
+  //       ..fields['name'] = name
+  //       ..fields['email'] = email
+  //       ..fields['phone'] = phone
+  //       ..fields['password'] = password
+  //       ..fields['password_confirmation'] = passwordConfirmation
+  //       ..fields['ip_adress'] = androidId!;
+
+  //     if (imageFile != null) {
+  //       request.files.add(
+  //         await http.MultipartFile.fromPath('image', imageFile.path),
+  //       );
+  //     }
+
+  //     final response = await request.send();
+
+  //     final responseBody = await response.stream.bytesToString();
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> responseData = json.decode(responseBody);
+  //       final loginResponse = LoginResponse.fromJson(responseData);
+  //       _userRole = responseData['data']['role'];
+
+  //       _user = loginResponse.user;
+  //       _accessToken = loginResponse.accessToken;
+  //       notifyListeners();
+  //       Navigator.pushReplacementNamed(context, RoutesManager.homePage);
+
+  //       final prefs = await SharedPreferences.getInstance();
+  //       await prefs.setString('access_token', _accessToken!);
+  //       await prefs.setInt('id', _user!.id ?? 0);
+  //       await prefs.setString('name', _user!.name);
+  //       await prefs.setString('email', _user!.email);
+  //       await prefs.setString('phone', _user!.phone);
+  //       await prefs.setString('user_image', _user!.image ?? "");
+  //       await prefs.setString('role', _userRole ?? "");
+  //     } else {
+  //       final responseData = json.decode(responseBody);
+
+  //       final errorMessage = responseData['message'] ?? 'Unknown error';
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content:
+  //               Text(errorMessage), // Display the exact message from the API
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('An error occurred: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   } finally {
+  //     setLoading(false); // End loading
+  //   }
+  // }
+
   Future<void> register({
     required String name,
     required String email,
@@ -126,14 +201,16 @@ class AuthViewModel with ChangeNotifier {
     required String password,
     required String passwordConfirmation,
     required BuildContext context,
-    File? imageFile, // Add this parameter
+    File? imageFile,
   }) async {
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       String? androidId = await getAndroidId();
       final url = Uri.parse(AppUrl.registerEndPoint);
 
+      // Create a new HTTP client to disable automatic redirects
+      final http.Client client = http.Client();
       final request = http.MultipartRequest('POST', url)
         ..headers['Content-Type'] = 'multipart/form-data'
         ..fields['name'] = name
@@ -149,33 +226,75 @@ class AuthViewModel with ChangeNotifier {
         );
       }
 
-      final response = await request.send();
-
+      // Send the request without automatic redirection handling
+      final response = await client.send(request);
       final responseBody = await response.stream.bytesToString();
+
+      print("Response Status: ${response.statusCode}");
+      print("Response Body: ${responseBody.substring(0, 200)}");
+
+      // Check for 200 status code, meaning success
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(responseBody);
-        final loginResponse = LoginResponse.fromJson(responseData);
-        _userRole = responseData['data']['role'];
+        try {
+          final Map<String, dynamic> responseData = json.decode(responseBody);
+          final loginResponse = LoginResponse.fromJson(responseData);
+          _userRole = responseData['data']['role'];
 
-        _user = loginResponse.user;
-        _accessToken = loginResponse.accessToken;
-        notifyListeners();
-        Navigator.pushReplacementNamed(context, RoutesManager.homePage);
+          _user = loginResponse.user;
+          _accessToken = loginResponse.accessToken;
+          notifyListeners();
+          Navigator.pushReplacementNamed(context, RoutesManager.homePage);
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('access_token', _accessToken!);
-        await prefs.setInt('id', _user!.id ?? 0);
-        await prefs.setString('name', _user!.name);
-        await prefs.setString('email', _user!.email);
-        await prefs.setString('phone', _user!.phone);
-        await prefs.setString('user_image', _user!.image ?? "");
-        await prefs.setString('role', _userRole ?? "");
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('access_token', _accessToken!);
+          await prefs.setInt('id', _user!.id ?? 0);
+          await prefs.setString('name', _user!.name);
+          await prefs.setString('email', _user!.email);
+          await prefs.setString('phone', _user!.phone);
+          await prefs.setString('user_image', _user!.image ?? "");
+          await prefs.setString('role', _userRole ?? "");
+        } catch (e) {
+          print('Error parsing JSON: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to parse server response.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else if (response.statusCode == 422 || response.statusCode == 302) {
+        // Handle specific errors like "username already exists"
+        try {
+          final Map<String, dynamic> responseData = json.decode(responseBody);
+          final errorMessage = responseData['message'] ?? 'Unknown error';
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('البريد الالكترونى مسجل بالفعل'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('البريد الالكترونى مسجل بالفعل'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } else {
-        final responseData = json.decode(responseBody);
-        final errorMessage = responseData['message'] ?? 'Unknown error';
-        throw Exception('Registration failed: $errorMessage');
+        // Handle other non-200 responses
+        print('Unexpected response status: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Registration failed. Please try again later.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
+      // General error handling
+      print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
@@ -183,11 +302,50 @@ class AuthViewModel with ChangeNotifier {
         ),
       );
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   }
-
   // Logout with loading indicator
+  // Future<void> logout(BuildContext context) async {
+  //   setLoading(true); // Start loading
+
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     _accessToken = prefs.getString('access_token');
+
+  //     if (_accessToken != null) {
+  //       final url = Uri.parse(AppUrl.logoutEndPoint);
+  //       final response = await http.post(
+  //         url,
+  //         headers: {
+  //           'Authorization': 'Bearer $_accessToken',
+  //         },
+  //       );
+
+  //       if (response.statusCode == 200) {
+  //         _user = null;
+  //         _accessToken = null;
+  //         await prefs.clear(); // Clear all preferences
+
+  //         notifyListeners();
+  //         Navigator.pushReplacementNamed(context, RoutesManager.homePage);
+  //       } else {
+  //         throw Exception('Failed to log out');
+  //       }
+  //     } else {
+  //       throw Exception('No access token found');
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('An error occurred: $e'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //   } finally {
+  //     setLoading(false); // End loading
+  //   }
+  // }
   Future<void> logout(BuildContext context) async {
     setLoading(true); // Start loading
 
@@ -195,6 +353,12 @@ class AuthViewModel with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _accessToken = prefs.getString('access_token');
 
+      // Clear preferences and reset user regardless of token status
+      _user = null;
+      _accessToken = null;
+      await prefs.clear(); // Clear all preferences
+
+      // Check if the token exists, then attempt a server-side logout
       if (_accessToken != null) {
         final url = Uri.parse(AppUrl.logoutEndPoint);
         final response = await http.post(
@@ -204,20 +368,19 @@ class AuthViewModel with ChangeNotifier {
           },
         );
 
+        // If logout is successful, navigate to the home page
         if (response.statusCode == 200) {
-          _user = null;
-          _accessToken = null;
-          await prefs.clear(); // Clear all preferences
-
           notifyListeners();
           Navigator.pushReplacementNamed(context, RoutesManager.homePage);
         } else {
-          throw Exception('Failed to log out');
+          throw Exception('Failed to log out from the server');
         }
       } else {
-        throw Exception('No access token found');
+        // No access token found (already logged out), navigate to home page
+        Navigator.pushReplacementNamed(context, RoutesManager.homePage);
       }
     } catch (e) {
+      // Show error message in case of any issues
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
